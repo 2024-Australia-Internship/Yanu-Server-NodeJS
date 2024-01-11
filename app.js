@@ -7,6 +7,7 @@ const app = express();
 const port = 3000;
 
 const {sequelize} = require ('./models'); //sequlize 인스턴스 불러오기
+
 app.use(express.json());
 app.use(cors());
 

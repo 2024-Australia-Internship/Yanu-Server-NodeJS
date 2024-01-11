@@ -22,6 +22,7 @@ exports.registerPostMid = (req, res) => {
 }
 
 
+
 exports.loginPostMid = (req, res) => {
     const { user_id, user_pw } = req.body;
     let salt = req.salt;
@@ -32,7 +33,6 @@ exports.loginPostMid = (req, res) => {
         } else {
             db.query('SELECT user_id, user_pw from user where user_id = ? AND user_pw = ?', [user_id, key], (err, result) => {
                 if (result.length === 1){
-                    console.log(user_id)
                     return res.json({ message: '로그인 성공' });
                 } else if (result.length === 0){
                     return res.json({ message: '아이디나 비밀번호가 일치하지 않음' }); 

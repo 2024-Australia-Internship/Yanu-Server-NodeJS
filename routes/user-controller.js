@@ -1,29 +1,25 @@
-const db = require('../db/db');
+const {User} = require('../models');
 const crypto = require('crypto');
 
-exports.registerPostMid = (req, res) => {
-    const {user_id, user_pw, user_phonenumber} = req.body;
-    const salt = crypto.randomBytes(128).toString('base64');
-    crypto.pbkdf2(user_pw, salt, 8745, 64, "sha512", (err, key) => {
-        if(err){
-            console.log("slat에서 에러 발생 : " + err);
-            return;
-        } else{
-            db.query('INSERT INTO user (user_id, user_pw, user_salt, user_phonenumber) VALUES (?,?,?,?)', [user_id, key, salt, user_phonenumber], (err, result) => {
-                if(err){
-                    console.log("회원가입 실패 " + err.message);
-                    return res.json({message : '회원가입 실패'});
-                } else {
-                    return res.json(result);
-                }
-            })
-        }
-    })
-}
+exports.registerPostMid = async (req, res) => {
+    try{
+        const {user_email, user_pw, user_phonenumber} = req.body;
+        const salt = crypto.randomBytes(128).toString('base64');
+        const hashedPassword = crypto.pbkdf2Sync(user_pw, salt, 8754, 64, 'sha512').toString('hex');
+        const newUser = await User.create({
+            user_email : user_email,
+            user_pw : hashedPassword,
+            user_salt : salt,
+            user_phonenumber : user_phonenumber,
+        });
+        res.json({message : '회원가입 성공'});
+    } catch (error){
+        console.log('회원가입 실패: ', error.message);
+        res.json({mesage : '회원가입 실패'});
+    }
+};
 
-
-
-exports.loginPostMid = (req, res) => {
+/*exports.loginPostMid = (req, res) => {
     const { user_id, user_pw } = req.body;
     let salt = req.salt;
     crypto.pbkdf2(user_pw, salt, 8745, 64, "sha512", (err, key) => {
@@ -42,4 +38,4 @@ exports.loginPostMid = (req, res) => {
             })
         }
     })
-};
+};*/

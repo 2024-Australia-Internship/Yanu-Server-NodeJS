@@ -1,6 +1,4 @@
-const db = require('../db/db');
-
-const saltRequired = (req, res, next) => {
+/*const saltRequired = (req, res, next) => {
     const { user_id, user_pw } = req.body;
     db.query('SELECT user_salt FROM user where user_id = ?', [user_id], (err, result) => {
         if (result.length === 1) {
@@ -14,4 +12,4 @@ const saltRequired = (req, res, next) => {
     })
 };
 
-module.exports = saltRequired;
+module.exports = saltRequired;*/

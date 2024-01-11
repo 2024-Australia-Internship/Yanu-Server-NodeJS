@@ -33,7 +33,7 @@ exports.loginPostMid = (req, res) => {
         } else {
             db.query('SELECT user_id, user_pw from user where user_id = ? AND user_pw = ?', [user_id, key], (err, result) => {
                 if (result.length === 1){
-                    return res.json({ message: '로그인 성공' });
+                    return res.json(result[0].user_id);     //로그인 성공 시 user_id 정보 보내주기
                 } else if (result.length === 0){
                     return res.json({ message: '아이디나 비밀번호가 일치하지 않음' }); 
                 }  else if (err){

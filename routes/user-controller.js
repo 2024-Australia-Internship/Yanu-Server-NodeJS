@@ -9,6 +9,7 @@ exports.registerPostMid = async (req, res) => {
         const newUser = await User.create({
             ...req.body,
             user_pw: hashedPassword,
+            user_salt : salt
         });
         res.json({ message: '회원가입 성공' });
     } catch (error) {
@@ -20,7 +21,6 @@ exports.registerPostMid = async (req, res) => {
 exports.loginPostMid = async (req, res) => {
     const { user_email, user_pw } = req.body;
     let salt = req.salt;
-    console.log(user)
     let hashedPassword = crypto.pbkdf2Sync(user_pw, salt, 8745, 64, 'sha512').toString('hex');
     const user = await User.findOne({
         attributes: ['user_email'],

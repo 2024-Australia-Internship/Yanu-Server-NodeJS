@@ -34,7 +34,7 @@ exports.loginPostMid = async (req, res) => {
         res.json({ result: user_email });
     }
     else {
-        //console.log(user)
+        console.log(user)
         res.json({ message: '아이디 또는 비밀번호를 잘못 입력' });
     }
 

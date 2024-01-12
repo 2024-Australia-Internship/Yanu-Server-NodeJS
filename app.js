@@ -22,7 +22,6 @@ sequelize.sync({ force: false })
   })
 
 app.use(morgan('dev')); //http 요펑 로깅을 위한 미들웨어
-app.use(express.static(path.join(__dirname, 'public'))); //public 디렉토리에서 정적 파일 제공
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

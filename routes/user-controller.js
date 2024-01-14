@@ -19,10 +19,10 @@ exports.registerPostMid = async (req, res) => {
             user_pw: hashedPassword,
             user_salt: salt
         });
-        res.json({ message: '회원가입 성공' });
+        res.status(201).json({ message: '회원가입 성공' });
     } catch (error) {
         console.log('회원가입 실패: ', error.message);
-        res.status(404).json({ message: '회원가입 실패' });
+        res.status(404).json({ message: '서버 오류' });
     }
 };
 
@@ -49,14 +49,14 @@ exports.loginPostMid = async (req, res) => {
 
         if (loginUser) {
             console.log("로그인 성공")
-            res.json({ result: user_email });
+            res.status(200).json({ result: user_email });
         } else {
             console.log("비밀번호가 일치하지 않음");
-            res.json({ message: '비밀번호가 일치하지 않습니다' });
+            res.status(404).json({ message: '비밀번호가 일치하지 않습니다' });
         }
     } catch (error) {
         console.log("로그인 실패: ", error);
-        res.json({ message: '로그인 실패' });
+        res.status(500).json({ message: '서버 오류' });
     }
 };
 

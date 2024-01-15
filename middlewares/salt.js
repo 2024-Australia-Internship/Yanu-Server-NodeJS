@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User } = require('../models'); 
 
 const saltRequired = async (req, res, next) => {
     const { user_email } = req.body;
@@ -13,11 +13,11 @@ const saltRequired = async (req, res, next) => {
             req.salt = salt;
             next();
         } else {
-            res.json({message : ' 아이디가 일치하지 않음'});
+            res.status(404).json({success : false, message : ' 아이디가 일치하지 않음'});
         }
     } catch(error) {
         console.log('saltedReqruied 미들웨어 오류:', error);
-        res.json({message : '서버 오류'});
+        res.status(500).json({success : false , message : '서버 오류'});
     }
 }
 

@@ -5,5 +5,5 @@ const saltMiddleware = require('../middlewares/salt');
 router.post('/register', usersMiddleware.registerPostMid);
 router.post('/login', saltMiddleware, usersMiddleware.loginPostMid); 
 router.post('/check/email', usersMiddleware.checkEmailPostMid);
-
+router.patch('/forget/password', usersMiddleware.forgetPasswordPatchMid);
 module.exports = router;

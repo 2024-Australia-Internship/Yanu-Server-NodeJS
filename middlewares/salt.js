@@ -1,3 +1,5 @@
+const { User } = require('../models'); 
+
 const saltRequired = async (req, res, next) => {
     const { user_email } = req.body;
     try{

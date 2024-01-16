@@ -1,5 +1,6 @@
 const { hasUncaughtExceptionCaptureCallback } = require('process');
 const { User } = require('../models');
+const {generateHashedPassword } = require('../utils/hashedPasword');
 const crypto = require('crypto');
 const multer = require('multer');
 const path = require('path');
@@ -11,15 +12,7 @@ exports.registerPostMid = async (req, res) => {
         const user_code = req.code;
         console.log("user_code : " + user_code);
         const salt = crypto.randomBytes(128).toString('base64');
-        const hashedPassword = await new Promise((resolve, rejects) => {
-            crypto.pbkdf2(user_pw, salt, 8754, 64, 'sha512', (err, derivedKey) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(derivedKey.toString('hex'));
-                }
-            });
-        });
+        const hashedPassword = await generateHashedPassword (user_pw, salt);
         const newUser = await User.create({
             ...req.body,
             user_pw: hashedPassword,
@@ -39,16 +32,7 @@ exports.loginPostMid = async (req, res) => {
     const { user_email, user_pw } = req.body;
     const salt = req.salt;
     try {
-        const hashedPassword = await new Promise((resolve, reject) => {
-            crypto.pbkdf2(user_pw, salt, 8754, 64, 'sha512', (err, derivedKey) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(derivedKey.toString('hex'));
-                }
-            });
-        });
-
+        const hashedPassword = await generateHashedPassword (user_pw, salt);
         const loginUser = await User.findOne({
             attributes: ['user_email'],
             where: {
@@ -90,21 +74,12 @@ exports.checkEmailPostMid = async (req, res) => {
 
 //비밀번호 잃어버렸을 때
 exports.forgetPasswordPatchMid = async (req, res) => {
-    const { user_email, user_password } = req.body;
+    const { user_email, new_password } = req.body;
     try {
         const salt = crypto.randomBytes(128).toString('base64');
-        const hashedPassword = await new Promise((resolve, rejects) => {
-            crypto.pbkdf2(user_password, salt, 8754, 64, 'sha512', (err, derivedKey) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(derivedKey.toString('hex'));
-                }
-            });
-        });
-
+        const hashedPassword = await generateHashedPassword (new_password, salt);
         const newPassword = await User.update(
-            { user_pw: hashedPassword, user_salt: salt },
+            { new_password: hashedPassword, user_salt: salt },
             { where: { user_email } }
         );
         console.log(newPassword)

@@ -3,7 +3,6 @@ const { User } = require('../models');
 const crypto = require('crypto');
 const multer = require('multer');
 const path = require('path');
-const exp = require('constants');
 
 //회원가입
 exports.registerPostMid = async (req, res) => {
@@ -91,11 +90,11 @@ exports.checkEmailPostMid = async (req, res) => {
 
 //비밀번호 잃어버렸을 때
 exports.forgetPasswordPatchMid = async (req, res) => {
-    const { user_email, new_password } = req.body;
+    const { user_email, user_password } = req.body;
     try {
         const salt = crypto.randomBytes(128).toString('base64');
         const hashedPassword = await new Promise((resolve, rejects) => {
-            crypto.pbkdf2(new_password, salt, 8754, 64, 'sha512', (err, derivedKey) => {
+            crypto.pbkdf2(user_password, salt, 8754, 64, 'sha512', (err, derivedKey) => {
                 if (err) {
                     reject(err);
                 } else {

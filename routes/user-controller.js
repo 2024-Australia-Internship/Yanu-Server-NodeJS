@@ -1,6 +1,8 @@
 const { hasUncaughtExceptionCaptureCallback } = require('process');
 const { User } = require('../models');
 const crypto = require('crypto');
+const multer = require('multer');
+const path = require('path');
 
 exports.registerPostMid = async (req, res) => {
     try {
@@ -20,10 +22,11 @@ exports.registerPostMid = async (req, res) => {
             user_pw: hashedPassword,
             user_salt: salt
         });
-        res.status(201).json({ message: '회원가입 성공' });
+        console.log(newUser);
+        res.status(201).json({ success: true, message: '회원가입 성공' });
     } catch (error) {
         console.log('회원가입 실패: ', error.message);
-        res.status(404).json({ message: '서버 오류' });
+        res.status(404).json({ success: false, message: '서버 오류' });
     }
 };
 
@@ -50,14 +53,14 @@ exports.loginPostMid = async (req, res) => {
 
         if (loginUser) {
             console.log("로그인 성공")
-            res.status(200).json({ result: user_email });
+            res.status(200).json({ success: true, result: user_email });
         } else {
             console.log("비밀번호가 일치하지 않음");
-            res.status(404).json({ message: '비밀번호가 일치하지 않습니다' });
+            res.status(404).json({ success: false, message: '비밀번호가 일치하지 않습니다' });
         }
     } catch (error) {
         console.log("로그인 실패: ", error);
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ success: false, message: '서버 오류' });
     }
 };
 
@@ -69,13 +72,13 @@ exports.checkEmailPostMid = async (req, res) => {
             where: { user_email }
         });
         if (checkEmail) {
-            res.status(409).json({ message: '중복된 이메일 입력' });
+            res.status(409).json({ success: false, message: '중복된 이메일 입력' });
         } else {
-            res.status(200).json({ message: '이메일 사용 가능' });
+            res.status(200).json({ success: true, message: '이메일 사용 가능' });
         }
     } catch (error) {
-        console.log("email 중복: ", error);
-        res.status(500).json({ message: '서버 오류' })
+        console.log("email 중복: ", error.message);
+        res.status(500).json({ success: false, message: '서버 오류' });
     }
 };
 
@@ -93,17 +96,49 @@ exports.forgetPasswordPatchMid = async (req, res) => {
             });
         });
 
-        const newPassword  = await User.update(
-            {user_pw: hashedPassword, user_salt: salt},
-            {where: {user_email : user_email}}
+        const newPassword = await User.update(
+            { user_pw: hashedPassword, user_salt: salt },
+            { where: { user_email: user_email } }
         );
-
-        if(newPassword[0] === 1) {
-            res.status(201).json({message : '비밀번호 변경 성공'});
+        if (newPassword[0] === 1) {
+            res.status(201).json({ success: true, message: '비밀번호 변경 성공' });
         } else {
-            res.status(404).json({message : '일치하는 이메일이 없습니다'});
+            console.log(newPassword);
+            console.log(user_email);
+            res.status(404).json({ success: false, message: '일치하는 이메일이 없습니다' });
         }
-    } catch(error){
-        res.status(500).json({message : '서버 오류'});
+    } catch (error) {
+        res.status(500).json({ success: false, message: '서버 오류' });
     }
 };
+
+exports.profilePostMid = async (req, res) => {
+    //이미지 저장 디렉토리 설정
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'uploads/');
+        },
+        filename: function (req, file, cb) {
+            console.log(req.body)
+            const nickname = req.body.nickname;
+            const uniqueSuffix = Date.now() + "_profile_" + nickname;
+            cb(null, uniqueSuffix + path.extname(file.originalname));
+        }
+    });
+
+    const upload = multer({ storage: storage }).single('profile_image');
+    //multer 업로드 함수 호출
+    upload(req, res, async function (err){
+        if(err instanceof multer.MulterError){
+            console.log("Multer Error:", err);
+            return res.status(500).json({success: false, message: '이미지 업로드 실패'});
+        } else if (err){
+            console.log("Error:", err);
+            return res.status(500).json({success : false, message : '서버 오류 발생'});
+        }
+
+        const image_url = req.file ? req.file.filename : null;
+        res.status(200).json({ success: true, message: '프로필이 성공적으로 업로드되었습니다.', image_url });
+    })
+
+}

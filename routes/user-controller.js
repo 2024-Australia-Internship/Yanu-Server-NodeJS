@@ -34,14 +34,23 @@ exports.loginPostMid = async (req, res) => {
     try {
         const hashedPassword = await generateHashedPassword (user_pw, salt);
         const loginUser = await User.findOne({
-            attributes: ['user_email'],
+            attributes: ['user_email', 'user_code'],
             where: {
                 user_pw: hashedPassword
             }
         });
 
         if (loginUser) {
-            console.log("로그인 성공")
+            console.log("로그인 성공");
+            req.session.user_code = loginUser.user_code;
+            req.session.save((err) => {
+                if (err) {
+                    console.error('세션 저장 오류:', err);
+                } else {
+                    console.log('세션 저장 완료');
+                    // 여기에서 다른 작업을 수행할 수 있습니다.
+                }
+            });
             res.status(200).json({ success: true, result: user_email });
         } else {
             console.log("비밀번호가 일치하지 않음");

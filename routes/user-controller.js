@@ -25,7 +25,8 @@ exports.registerPostMid = async (req, res) => {
             ...req.body,
             user_pw: hashedPassword,
             user_salt: salt,
-            user_code: user_code
+            user_code: user_code,
+            is_farmer : false
         });
         res.status(201).json({ success: true, message: '회원가입 성공' });
     } catch (error) {

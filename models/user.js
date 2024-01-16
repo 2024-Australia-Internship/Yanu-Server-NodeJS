@@ -28,6 +28,9 @@ class User extends Sequelize.Model {
       nickname: {
         type: DataTypes.STRING(50),
       },
+      user_introduction: {
+        type: DataTypes.TEXT,
+      },
       user_code: {
         type: DataTypes.STRING(20),
         unique: true,

@@ -48,10 +48,9 @@ exports.loginPostMid = async (req, res) => {
                     console.error('세션 저장 오류:', err);
                 } else {
                     console.log('세션 저장 완료');
-                    // 여기에서 다른 작업을 수행할 수 있습니다.
                 }
             });
-            res.status(200).json({ success: true, result: user_email });
+            res.status(200).json({ success: true, result: {user_email : user_email, user_code : loginUser.user_code} });
         } else {
             console.log("비밀번호가 일치하지 않음");
             res.status(404).json({ success: false, message: '비밀번호가 일치하지 않습니다' });

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const  morgan = require('morgan');
+const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
@@ -8,6 +9,8 @@ const { sequelize } = require('./models'); //sequlize 인스턴스 불러오기
 
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set('port', process.env.PORT || 3000); //포트 설정
 

@@ -4,6 +4,7 @@ const {generateHashedPassword } = require('../utils/hashedPasword');
 const crypto = require('crypto');
 const multer = require('multer');
 const path = require('path');
+const { unwatchFile } = require('fs');
 
 //회원가입
 exports.registerPostMid = async (req, res) => {
@@ -156,5 +157,19 @@ exports.profileInfoPostMid = async (req, res) => {
         res.status(200).json({ success: true, message: '프로필이 성공적으로 업로드 됨'});   
     } else {
         res.status(500).json({ success: true, message: '프로필 업로드 실패'}); 
+    }
+}
+
+//usercode로 모든 정보 불러오기
+exports.usercodeGetMid = async (req, res) => {
+    const user_code = req.params.user_code;
+    const userAllInfo = await User.findAll({
+        attributes : ['user_email', 'user_phonenumber', 'profile_image', 'nickname', 'user_introduction', 'user_code', 'is_farmer'],
+        where : {user_code}
+    });
+    if(userAllInfo) {
+        res.status(200).json({ success: true, userAllInfo });
+    } else {
+        res.status(404).json({ success: false, message: '해당 user_code를 가진 사용자를 찾을 수 없음' });
     }
 }

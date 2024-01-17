@@ -10,7 +10,6 @@ exports.registerPostMid = async (req, res) => {
     try {
         const { user_email, user_pw, user_phonenumber } = req.body;
         const user_code = req.code;
-        console.log("user_code : " + user_code);
         const salt = crypto.randomBytes(128).toString('base64');
         const hashedPassword = await generateHashedPassword (user_pw, salt);
         const newUser = await User.create({
@@ -34,15 +33,23 @@ exports.loginPostMid = async (req, res) => {
     try {
         const hashedPassword = await generateHashedPassword (user_pw, salt);
         const loginUser = await User.findOne({
-            attributes: ['user_email'],
+            attributes: ['user_email', 'user_code'],
             where: {
                 user_pw: hashedPassword
             }
         });
 
         if (loginUser) {
-            console.log("로그인 성공")
-            res.status(200).json({ success: true, result: user_email });
+            console.log("로그인 성공");
+            req.session.user_code = loginUser.user_code;
+            req.session.save((err) => {
+                if (err) {
+                    console.error('세션 저장 오류:', err);
+                } else {
+                    console.log('세션 저장 완료');
+                }
+            });
+            res.status(200).json({ success: true, result: {user_email : user_email, user_code : loginUser.user_code} });
         } else {
             console.log("비밀번호가 일치하지 않음");
             res.status(404).json({ success: false, message: '비밀번호가 일치하지 않습니다' });
@@ -95,13 +102,16 @@ exports.forgetPasswordPatchMid = async (req, res) => {
 
 //프르필 이미지 업로드
 exports.profilePostMid = async (req, res) => {
+    const user_code = req.params.user_code;
+    console.log(user_code)
+    console.log("Received request for user_code:", user_code);
     //이미지 저장 디렉토리 설정
     const storage = multer.diskStorage({
         destination: function (req, file, cb) {
             cb(null, 'uploads/');
         },
         filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + "_profile_";
+            const uniqueSuffix = Date.now() + "_profile_" + user_code;
             cb(null, uniqueSuffix + path.extname(file.originalname));
         }
     });
@@ -109,7 +119,6 @@ exports.profilePostMid = async (req, res) => {
 
     //multer 업로드 함수 호출
     upload(req, res, async function (err) {
-        console.log(req.body)
 
         if (err instanceof multer.MulterError) {
             console.log("Multer Error:", err);
@@ -120,10 +129,32 @@ exports.profilePostMid = async (req, res) => {
         }
 
         const image_url = req.file ? req.file.filename : null;
-        res.status(200).json({ success: true, message: '프로필이 성공적으로 업로드되었습니다.', image_url });
+
+        const register_img_url = await User.update(
+            { profile_image : image_url},
+            { where: { user_code } }
+        );
+        
+        if(register_img_url) {
+            res.status(200).json({ success: true, message: '프로필이미지 성공적으로 업로드 됨'});   
+        } else {
+            res.status(500).json({ success: false, message: '프로필이미지 업로드 실패' });   
+        }
     })
 }
 
 //닉네임과 코멘트 입력
 exports.profileInfoPostMid = async (req, res) => {
+    const user_code = req.params.user_code;
+    const {nickname, user_introduction} = req.body;
+    const register_img_url = await User.update(
+        { nickname: nickname, user_introduction: user_introduction },
+        { where: { user_code } }
+    );
+
+    if(register_img_url) {
+        res.status(200).json({ success: true, message: '프로필이 성공적으로 업로드 됨'});   
+    } else {
+        res.status(500).json({ success: true, message: '프로필 업로드 실패'}); 
+    }
 }

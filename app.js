@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const  morgan = require('morgan');
+const session = require('express-session');
 const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
@@ -11,6 +12,11 @@ app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: true
+}));
 
 app.set('port', process.env.PORT || 3000); //포트 설정
 

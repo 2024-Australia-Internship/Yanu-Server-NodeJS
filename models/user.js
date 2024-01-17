@@ -37,9 +37,6 @@ class User extends Sequelize.Model {
       },
       is_farmer: {
         type: DataTypes.BOOLEAN,
-      },
-      is_first_login: {
-        type: DataTypes.BOOLEAN,
       }
     },{
         sequelize,

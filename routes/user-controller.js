@@ -174,16 +174,3 @@ exports.usercodeGetMid = async (req, res) => {
         res.status(404).json({ success: false, message: '해당 user_code를 가진 사용자를 찾을 수 없음' });
     }
 }
-
-exports.checkFirstLoginGetMid = async (req, res) => {
-    const user_code = req.params.user_code;
-    const checkFirstLogin = await User.update(
-        { is_first_login: true },
-        { where: { user_code } }
-    );
-    if (checkFirstLogin) {
-        res.status(200).json({ success: true, result : 'true' });
-    } else {
-        res.status(500).json({ success: false, message: '첫 로그인 여부 체크 안됨' });
-    }
-}

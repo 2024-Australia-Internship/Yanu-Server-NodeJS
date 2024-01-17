@@ -182,7 +182,7 @@ exports.checkFirstLoginGetMid = async (req, res) => {
         { where: { user_code } }
     );
     if (checkFirstLogin) {
-        res.status(200).json({ success: true, message: '첫 로그인 여부 체크 됨' });
+        res.status(200).json({ success: true, result : 'true' });
     } else {
         res.status(500).json({ success: false, message: '첫 로그인 여부 체크 안됨' });
     }

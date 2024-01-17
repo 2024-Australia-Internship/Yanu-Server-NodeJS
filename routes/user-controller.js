@@ -136,13 +136,25 @@ exports.profilePostMid = async (req, res) => {
         );
         
         if(register_img_url) {
-            res.status(200).json({ success: true, message: '프로필이 성공적으로 업로드 됨'});   
+            res.status(200).json({ success: true, message: '프로필이미지 성공적으로 업로드 됨'});   
         } else {
-            res.status(500).json({ success: false, message: '프로필 업로드 실패' });   
+            res.status(500).json({ success: false, message: '프로필이미지 업로드 실패' });   
         }
     })
 }
 
 //닉네임과 코멘트 입력
 exports.profileInfoPostMid = async (req, res) => {
+    const user_code = req.params.user_code;
+    const {nickname, user_introduction} = req.body;
+    const register_img_url = await User.update(
+        { nickname: nickname, user_introduction: user_introduction },
+        { where: { user_code } }
+    );
+
+    if(register_img_url) {
+        res.status(200).json({ success: true, message: '프로필이 성공적으로 업로드 됨'});   
+    } else {
+        res.status(500).json({ success: true, message: '프로필 업로드 실패'}); 
+    }
 }

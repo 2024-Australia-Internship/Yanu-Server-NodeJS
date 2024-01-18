@@ -36,6 +36,9 @@ app.use(express.urlencoded({ extended: false }));
 const users = require('./routes/user');
 app.use('/users', users);
 
+const products = require('./routes/product');
+app.use('/products', products);
+
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
 });

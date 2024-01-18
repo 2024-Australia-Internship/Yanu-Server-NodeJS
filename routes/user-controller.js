@@ -21,7 +21,7 @@ exports.registerPostMid = async (req, res) => {
             is_farmer: false,
             is_first_login: false
         });
-        res.status(201).json({ success: true, message: '회원가입 성공' });
+        res.status(201).json({ success: true, result: {user_code: user_code } });
     } catch (error) {
         console.log('회원가입 실패: ', error.message);
         res.status(404).json({ success: false, message: '서버 오류' });
@@ -165,25 +165,12 @@ exports.profileInfoPostMid = async (req, res) => {
 exports.usercodeGetMid = async (req, res) => {
     const user_code = req.params.user_code;
     const userAllInfo = await User.findAll({
-        attributes: ['user_email', 'user_phonenumber', 'profile_image', 'nickname', 'user_introduction', 'user_code', 'is_farmer', 'is_first_login'],
+        attributes: ['user_email', 'user_phonenumber', 'profile_image', 'nickname', 'user_introduction', 'is_farmer'],
         where: { user_code }
     });
     if (userAllInfo) {
         res.status(200).json({ success: true, userAllInfo });
     } else {
         res.status(404).json({ success: false, message: '해당 user_code를 가진 사용자를 찾을 수 없음' });
-    }
-}
-
-exports.checkFirstLoginGetMid = async (req, res) => {
-    const user_code = req.params.user_code;
-    const checkFirstLogin = await User.update(
-        { is_first_login: true },
-        { where: { user_code } }
-    );
-    if (checkFirstLogin) {
-        res.status(200).json({ success: true, message: '첫 로그인 여부 체크 됨' });
-    } else {
-        res.status(500).json({ success: false, message: '첫 로그인 여부 체크 안됨' });
     }
 }

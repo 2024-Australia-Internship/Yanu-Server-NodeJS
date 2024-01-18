@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-class User extends Sequelize.Model {
+class Product extends Sequelize.Model {
   static init(sequelize) {
     return super.init({
       id: {
@@ -9,41 +9,45 @@ class User extends Sequelize.Model {
         primaryKey: true,
         allowNull: false,
       },
-      user_email: {
+      user_code: {
         type: DataTypes.STRING(45),
         unique: true,
       },
-      user_pw: {
-        type: DataTypes.BLOB,
+      product_code: {
+        type: DataTypes.STRING(10),
+        unique: true,
       },
-      user_salt: {
-        type: DataTypes.BLOB,
+      product_image: {
+        type: DataTypes.STRING(500),
       },
-      user_phonenumber: {
+      product_title: {
         type: DataTypes.STRING(50),
       },
-      profile_image: {
-        type: DataTypes.STRING(100),
+      product_category: {
+        type: DataTypes.BOOLEAN,
       },
-      nickname: {
-        type: DataTypes.STRING(50),
+      product_hashtag: {
+        type: DataTypes.STRING(150),
       },
-      user_introduction: {
-        type: DataTypes.TEXT,
+      product_price: {
+        type: DataTypes.STRING(20),
       },
-      user_code: {
+      product_weight : {
+        type: DataTypes.STRING(10),
+      },
+      product_unit: {
         type: DataTypes.STRING(20),
         unique: true,
       },
-      is_farmer: {
-        type: DataTypes.BOOLEAN,
+      product_description: {
+        type: DataTypes.TEXT,
       }
     },{
         sequelize,
         timestamps: false,
         underscored: false,
-        modelName: 'User',
-        tableName: 'users',
+        modelName: 'Product',
+        tableName: 'products',
         paranoid: false,
         charset: 'utf8',
         collate: 'utf8_general_ci'
@@ -51,4 +55,4 @@ class User extends Sequelize.Model {
   }
 }
 
-module.exports = User;
+module.exports = Product;

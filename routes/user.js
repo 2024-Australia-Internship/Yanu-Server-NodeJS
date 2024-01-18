@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const usersMiddleware = require('./user-controller');
 const saltMiddleware = require('../middlewares/salt');
-const userCodeMiddleware = require('../middlewares/user_code');
+const userCodeMiddleware = require('../middlewares/create_code');
 
 router.post('/register', userCodeMiddleware, usersMiddleware.registerPostMid);
 router.post('/login', saltMiddleware, usersMiddleware.loginPostMid); 

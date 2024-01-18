@@ -9,5 +9,5 @@ router.post('/check/email', usersMiddleware.checkEmailPostMid);
 router.patch('/forget/password', usersMiddleware.forgetPasswordPatchMid);
 router.post('/:user_code/profile', usersMiddleware.profilePostMid);
 router.post('/:user_code/profile/info', usersMiddleware.profileInfoPostMid);
-router.get('/:user_code', userCodeMiddleware, usersMiddleware.usercodeGetMid);
+router.get('/:user_code', usersMiddleware.usercodeGetMid);
 module.exports = router;

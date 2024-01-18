@@ -21,7 +21,7 @@ exports.registerPostMid = async (req, res) => {
             is_farmer: false,
             is_first_login: false
         });
-        res.status(201).json({ success: true, message: '회원가입 성공' });
+        res.status(201).json({ success: true, result: {user_code: user_code } });
     } catch (error) {
         console.log('회원가입 실패: ', error.message);
         res.status(404).json({ success: false, message: '서버 오류' });

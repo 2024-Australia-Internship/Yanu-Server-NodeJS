@@ -1,6 +1,6 @@
 const { Product } = require('../models');
 
-exports.createPostMid = async (req, res) => {
+exports.createInfoPostMid = async (req, res) => {
     const {product_title, product_category, product_hashtag, product_price, product_weight, product_unit,  product_description} = req.body;
     const user_code = req.params.user_code;
     const product_code = req.code;

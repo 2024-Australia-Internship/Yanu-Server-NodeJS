@@ -13,10 +13,6 @@ class Product extends Sequelize.Model {
         type: DataTypes.STRING(45),
         unique: true,
       },
-      product_code: {
-        type: DataTypes.STRING(10),
-        unique: true,
-      },
       product_image: {
         type: DataTypes.STRING(500),
       },

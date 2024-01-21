@@ -75,14 +75,16 @@ exports.createImagePostMid = async (req, res) => {
 
 exports.productcodeGetMid = async (req, res) => {
     const product_code = req.params.product_code;
-
     try{
         const infoProduct = await Product.findOne({
             where: { product_code }
         });
-    
+        const {product_image} = infoProduct;
+        const fileNames = product_image.split(",");
+        const images = fileNames.map((fileName) => `http://localhost:3000/product_images/${fileName}`);
+
         if(infoProduct){
-            res.status(200).json({success : true, infoProduct});
+            res.status(200).json({success : true, infoProduct, images});
         } else {
             res.status(404).json({success: false, message: '해당 product_code를 가진 제품을 찾을 수 없음'})
         }

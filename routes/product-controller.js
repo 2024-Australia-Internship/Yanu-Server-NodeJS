@@ -72,3 +72,21 @@ exports.createImagePostMid = async (req, res) => {
         return res.status(500).json({ success: false, message: '이미지 db 저장 중 에러 발생' });
     }
 };
+
+exports.productcodeGetMid = async (req, res) => {
+    const product_code = req.params.product_code;
+
+    try{
+        const infoProduct = await Product.findOne({
+            where: { product_code }
+        });
+    
+        if(infoProduct){
+            res.status(200).json({success : true, infoProduct});
+        } else {
+            res.status(404).json({success: false, message: '해당 product_code를 가진 제품을 찾을 수 없음'})
+        }
+    } catch (error){
+        res.status(500).json({ success: false, message: '서버 오류로 제품 불러오기 실패' })
+    }
+}

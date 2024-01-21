@@ -34,6 +34,10 @@ class Product extends Sequelize.Model {
       product_unit: {
         type: DataTypes.STRING(20),
       },
+      product_code: {
+        type: DataTypes.STRING(10),
+        unique: true,
+      },
       product_description: {
         type: DataTypes.TEXT,
       }

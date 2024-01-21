@@ -31,6 +31,10 @@ class User extends Sequelize.Model {
       user_introduction: {
         type: DataTypes.TEXT,
       },
+      user_code: {
+        type: DataTypes.STRING(20),
+        unique: true,
+      },
       is_farmer: {
         type: DataTypes.BOOLEAN,
       }

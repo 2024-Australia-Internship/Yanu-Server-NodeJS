@@ -73,22 +73,36 @@ exports.createImagePostMid = async (req, res) => {
     }
 };
 
+exports.listGetMid = async (req, res) => {
+    try {
+        const products = await Product.findAll({});
+        if (products && products.length > 0) {
+            res.status(200).json({ success: true, products });
+        } else {
+            res.status(404).json({ success: false, message: '조회된 제품이 없습니다.' });
+        }
+    } catch (error) {
+        console.log("Addfaf")
+        res.status(500).json({ success: false, message: '데이터베이스에서 제품 목록을 불러오는 중 오류 발생' });
+    }
+}
+
 exports.productcodeGetMid = async (req, res) => {
     const product_code = req.params.product_code;
-    try{
+    try {
         const infoProduct = await Product.findOne({
             where: { product_code }
         });
-        const {product_image} = infoProduct;
+        const { product_image } = infoProduct;
         const fileNames = product_image.split(",");
         const images = fileNames.map((fileName) => `http://localhost:3000/product_images/${fileName}`);
 
-        if(infoProduct){
-            res.status(200).json({success : true, infoProduct, images});
+        if (infoProduct) {
+            res.status(200).json({ success: true, infoProduct, images });
         } else {
-            res.status(404).json({success: false, message: '해당 product_code를 가진 제품을 찾을 수 없음'})
+            res.status(404).json({ success: false, message: '해당 product_code를 가진 제품을 찾을 수 없음' })
         }
-    } catch (error){
+    } catch (error) {
         res.status(500).json({ success: false, message: '서버 오류로 제품 불러오기 실패' })
     }
 }

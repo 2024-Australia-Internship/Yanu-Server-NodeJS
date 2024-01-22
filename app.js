@@ -39,6 +39,9 @@ app.use('/users', users);
 const products = require('./routes/product');
 app.use('/products', products);
 
+const farms = require('./routes/farm');
+app.use('/farms', farms);
+
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
 });

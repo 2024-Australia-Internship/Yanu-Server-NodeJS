@@ -1,7 +1,7 @@
 const { Farm, User} = require('../models');
 
 exports.registerPostMid = async (req, res) => {
-    const {user_code, business_name, farmer_name, product_price, farm_phonenumber, farm_email, farm_address} = req.body;
+    const {user_code, business_name, farmer_name, farm_phonenumber, farm_email, farm_address} = req.body;
     try{
         const registerFarm = await Farm.create({
             ...req.body

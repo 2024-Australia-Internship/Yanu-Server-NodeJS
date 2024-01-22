@@ -1,4 +1,4 @@
-const { Farm } = require('../models');
+const { Farm, User} = require('../models');
 
 exports.registerPostMid = async (req, res) => {
     const {user_code, business_name, farmer_name, product_price, farm_phonenumber, farm_email, farm_address} = req.body;
@@ -6,6 +6,7 @@ exports.registerPostMid = async (req, res) => {
         const registerFarm = await Farm.create({
             ...req.body
         });
+
         if(registerFarm) {
             res.status(201).json({success: true, message: '농장 등록 성공'});
         } else{

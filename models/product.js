@@ -12,6 +12,10 @@ class Product extends Sequelize.Model {
       user_code: {
         type: DataTypes.STRING(45),
         unique: true,
+        reference: {
+          model:'User',
+          key: 'user_code',
+        },
       },
       product_image: {
         type: DataTypes.STRING(500),

@@ -1,4 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
+const User = require('./user');
+const Heart = require('./heart')
 
 class Product extends Sequelize.Model {
   static init(sequelize) {
@@ -12,7 +14,7 @@ class Product extends Sequelize.Model {
       user_code: {
         type: DataTypes.STRING(45),
         reference: {
-          model:'User',
+          model: User,
           key: 'user_code',
         },
       },
@@ -31,7 +33,7 @@ class Product extends Sequelize.Model {
       product_price: {
         type: DataTypes.STRING(20),
       },
-      product_weight : {
+      product_weight: {
         type: DataTypes.STRING(10),
       },
       product_unit: {
@@ -44,17 +46,18 @@ class Product extends Sequelize.Model {
       product_description: {
         type: DataTypes.TEXT,
       }
-    },{
-        sequelize,
-        timestamps: false,
-        underscored: false,
-        modelName: 'Product',
-        tableName: 'products',
-        paranoid: false,
-        charset: 'utf8',
-        collate: 'utf8_general_ci'
+    }, {
+      sequelize,
+      timestamps: false,
+      underscored: false,
+      modelName: 'Product',
+      tableName: 'products',
+      paranoid: false,
+      charset: 'utf8',
+      collate: 'utf8_general_ci'
     });
   }
 }
+
 
 module.exports = Product;

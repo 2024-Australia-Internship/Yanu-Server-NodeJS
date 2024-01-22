@@ -1,4 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
+const User = require('./user');
+const Product = require('./product');
 
 class Heart extends Sequelize.Model {
     static init(sequelize) {
@@ -12,14 +14,14 @@ class Heart extends Sequelize.Model {
             user_code: {
                 type: DataTypes.STRING(20),
                 reference: {
-                    model: 'user',
+                    model: User,
                     key: 'user_code',
                 },
             },
             product_code: {
                 type: DataTypes.STRING(20),
                 reference: {
-                    model: 'Product',
+                    model: Product,
                     key: 'product_code'
                 },
             }

@@ -1,7 +1,6 @@
 const { Farm, User} = require('../models');
 
 exports.registerPostMid = async (req, res) => {
-    const {user_code, business_name, farmer_name, farm_phonenumber, farm_email, farm_address} = req.body;
     try{
         const user = await User.findOne({ where: { user_code } });
 

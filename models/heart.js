@@ -27,8 +27,8 @@ class Heart extends Sequelize.Model {
             sequelize,
             timestamps: false,
             underscored: false,
-            modelName: 'Product',
-            tableName: 'products',
+            modelName: 'Heart',
+            tableName: 'hearts',
             paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci'

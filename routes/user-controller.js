@@ -165,7 +165,7 @@ exports.profileInfoPostMid = async (req, res) => {
 exports.usercodeGetMid = async (req, res) => {
     const user_code = req.params.user_code;
     const userAllInfo = await User.findAll({
-        attributes: ['user_email', 'user_phonenumber', 'profile_image', 'nickname', 'user_introduction', 'is_farmer'],
+        attributes: ['user_email', 'user_phonenumber', 'profile_image', 'nickname', 'user_introduction', 'user_ugly', 'is_farmer'],
         where: { user_code }
     });
     if (userAllInfo) {

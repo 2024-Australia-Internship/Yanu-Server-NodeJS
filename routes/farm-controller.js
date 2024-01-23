@@ -3,14 +3,16 @@ const { Farm, User} = require('../models');
 exports.registerPostMid = async (req, res) => {
     try{
         const user_code = req.body.user_code;
+        const farm_code = req.code;
         const user = await User.findOne({ where: { user_code } });
         const registerFarm = await Farm.create({
+            farm_code,
             ...req.body
         });
 
         if(registerFarm) {
             await user.update({ is_farmer: true });
-            res.status(201).json({success: true, message: '농장 등록 성공'});
+            res.status(201).json({success: true, message: '농장 등록 성공', farm_code});
         } else{
             res.status(400).json({success: false, message : '농장 등록 중 오류 발생'})
         }

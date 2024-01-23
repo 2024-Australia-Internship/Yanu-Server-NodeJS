@@ -23,9 +23,6 @@ class Farm extends Sequelize.Model {
       farmer_name: {
         type: DataTypes.STRING(50),
       },
-      farmer_name: {
-        type: DataTypes.STRING(20),
-      },
       farm_phonenumber : {
         type: DataTypes.STRING(50),
       },

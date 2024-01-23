@@ -31,7 +31,10 @@ class Farm extends Sequelize.Model {
       },
       farm_address: {
         type: DataTypes.STRING(120),
-      },
+      }, 
+      farm_image: {
+        type: DataTypes.STRING(100),
+      }
     },{
         sequelize,
         timestamps: false,

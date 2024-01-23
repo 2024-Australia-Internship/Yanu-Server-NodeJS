@@ -1,8 +1,8 @@
-const { Heart, Product, User } = require('../models');
+const { Heart, Product, Farm, User } = require('../models');
 
 exports.heartPostMid = async (req, res) => {
     const product_code = req.params.product_code;
-    const {user_code, product_category} = req.body; //category는 bool, 0은 product, 1은 farm
+    const { user_code, product_category } = req.body; //category는 bool, 0은 product, 1은 farm
 
     try {
         const createHeart = await Heart.create({
@@ -44,34 +44,41 @@ exports.heartDeleteMid = async (req, res) => {
 
 exports.heartGetMid = async (req, res) => {
     const user_code = req.params.user_code;
+    const user_category = req.params.product_category;
+    const categoryInfo = (user_category == "product") ? 0 : 1
+    let findResult;
     try {
-
-        //Heart에 대한 모든 정보 불러옴
-        const listHeart = await Heart.findAll({
+        heartList = await Heart.findAll({
             where: {
-                user_code: user_code
+                user_code,
+                product_category: categoryInfo
             }
-        });
+        })
 
         // 각 하트에 대한 제품 정보를 가져오는 배열을 생성
-        const productListPromise = listHeart.map(async heart => {
-            // 하트에 해당하는 제품을 찾기.
-            const product = await Product.findAll({ where: { user_code: heart.dataValues.user_code } });
-            const productDataValues = product.map(product => product.dataValues);
+        const productListPromise = heartList.map(async heart => {
+            // 하트에 해당하는 제품을 찾기
+            if (categoryInfo === 0) {
+                findResult = await Product.findAll({ where: { user_code: heart.dataValues.user_code } });
+            } else {
+                findResult = await Farm.findAll({ where: { user_code: heart.dataValues.user_code } });
+            }
+
+            const productDataValues = findResult.map(findResult => findResult.dataValues);
             return {
-                product : productDataValues
+                product: productDataValues
             };
         });
 
         // Promise 배열을 모두 기다려 결과를 얻습니다.
         const productList = await Promise.all(productListPromise);
 
-        if(productList.length > 0){
+        if (productList.length > 0) {
             res.status(200).json({ success: true, productList });
-        } else if(productList.length === 0) {
-            res.status(404).json({ success: false, message: '해당 유저의 찜 내역이 없음'})
+        } else if (productList.length === 0) {
+            res.status(404).json({ success: false, message: '해당 유저의 찜 내역이 없음' })
         } else {
-            res.status(400).json({ success : false, message: '하트 내역 불러오는 중 에러 발생'})
+            res.status(400).json({ success: false, message: '하트 내역 불러오는 중 에러 발생' })
         }
     } catch (error) {
         console.log(error.message)

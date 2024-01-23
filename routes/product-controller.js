@@ -1,4 +1,4 @@
-const { Product } = require('../models');
+const { Product, Farm, User } = require('../models');
 const multer = require('multer');
 const path = require('path');
 
@@ -19,7 +19,6 @@ exports.createInfoPostMid = async (req, res) => {
     }
 
 }
-
 
 exports.createImagePostMid = async (req, res) => {
     const user_code = req.params.user_code;
@@ -77,7 +76,6 @@ exports.createImagePostMid = async (req, res) => {
 exports.listGetMid = async (req, res) => {
     try {
         const products = await Product.findAll({});
-
         // 각 제품의 0번째 이미지 파일명 가져오기
         const firstProductImages = products.map(product => {
             return product.product_image ? product.product_image.split(',')[0] : null;
@@ -100,7 +98,9 @@ exports.listGetMid = async (req, res) => {
 }
 
 exports.productcodeGetMid = async (req, res) => {
+    const user_code = req.params.user_code;
     const product_code = req.params.product_code;
+    let userInfo = [];
     try {
         const infoProduct = await Product.findOne({
             where: { product_code }
@@ -109,12 +109,25 @@ exports.productcodeGetMid = async (req, res) => {
         const fileNames = product_image.split(",");
         const images = fileNames.map((fileName) => `http://192.168.1.115:3000/product_images/${fileName}`);
 
+        const nickname = await User.findOne({
+            where : {user_code},
+            attributes: ['nickname']
+        });
+        userInfo.push(nickname.nickname);
+
+        const businessName = await Farm.findOne({
+            where : {user_code},
+            attributes: ['business_name']
+        })
+        userInfo.push(businessName.business_name);
+
         if (infoProduct) {
-            res.status(200).json({ success: true, infoProduct, images });
+            res.status(200).json({ success: true, infoProduct, images, userInfo });
         } else {
             res.status(404).json({ success: false, message: '해당 product_code를 가진 제품을 찾을 수 없음' })
         }
     } catch (error) {
+        console.log(error)
         res.status(500).json({ success: false, message: '서버 오류로 제품 불러오기 실패' })
     }
 }

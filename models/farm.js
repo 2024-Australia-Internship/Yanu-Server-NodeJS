@@ -11,6 +11,11 @@ class Farm extends Sequelize.Model {
       },
       user_code: {
         type: DataTypes.STRING(45),
+        unique: true,
+      },
+      farm_code: {
+        type: DataTypes.STRING(45),
+
       },
       business_name: {
         type: DataTypes.STRING(80),

@@ -18,8 +18,8 @@ exports.registerPostMid = async (req, res) => {
             user_pw: hashedPassword,
             user_salt: salt,
             user_code: user_code,
+            user_ugly: 0,
             is_farmer: false,
-            is_first_login: false
         });
         res.status(201).json({ success: true, result: {user_code: user_code } });
     } catch (error) {

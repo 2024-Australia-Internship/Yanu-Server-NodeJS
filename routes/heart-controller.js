@@ -42,27 +42,21 @@ exports.heartDeleteMid = async (req, res) => {
     }
 }
 
-exports.heartGetMid = async (req, res) => {
+exports.heartProductGetMid = async (req, res) => {
     const user_code = req.params.user_code;
-    const user_category = req.params.product_category;
-    const categoryInfo = (user_category == "product") ? 0 : 1
-    let findResult;
     try {
-        heartList = await Heart.findAll({
+        const heartList = await Heart.findAll({
             where: {
                 user_code,
-                product_category: categoryInfo
+                product_category: 0
             }
         })
 
+        const codeValues = heartList.map(heartList => heartList.code);
+
         // 각 하트에 대한 제품 정보를 가져오는 배열을 생성
-        const productListPromise = heartList.map(async heart => {
-            // 하트에 해당하는 제품을 찾기
-            if (categoryInfo === 0) {
-                findResult = await Product.findAll({ where: { user_code: heart.dataValues.user_code } });
-            } else if (categoryInfo === 1){
-                findResult = await Farm.findAll({ where: { user_code: heart.dataValues.user_code } });
-            }
+        const productListPromise = codeValues.map(async code => {
+            const findResult = await Product.findAll({ where: { user_code: code } });
 
             const productDataValues = findResult.map(findResult => findResult.dataValues);
             return {
@@ -70,10 +64,10 @@ exports.heartGetMid = async (req, res) => {
             };
         });
 
-        // Promise 배열을 모두 기다려 결과를 얻습니다.
+        // Promise 배열을 모두 기다려 결과를 얻음
         const productList = await Promise.all(productListPromise);
 
-        if (productList.length > 0) {
+        if (productListPromise.length > 0) {
             res.status(200).json({ success: true, productList });
         } else if (productList.length === 0) {
             res.status(404).json({ success: false, message: '해당 유저의 찜 내역이 없음' })

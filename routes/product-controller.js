@@ -183,3 +183,28 @@ exports.productSearchGetMid = async (req, res) => {
         res.status(500).json({ success: false });
     }
 }
+
+exports.productCategorySearchGetMid = async (req, res) => {
+    const product_category = req.params.product_category==="vegetable" ? 0 : 1;
+    const keyword = req.params.keyword;
+
+    try {
+        const searchProduct = await Product.findAll({
+            where: {
+                product_title: {
+                    [Sequelize.Op.like]: `%${keyword}%`
+                },
+                product_category
+            }
+        })
+        console.log(searchProduct)
+        if(searchProduct.length > 0){
+            res.status(200).json({ success: true, searchProduct });
+        } else {
+            res.status(404).json({ success: true, message: '검색 결과 없음' });
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false });
+    }
+}

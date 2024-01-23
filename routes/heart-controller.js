@@ -70,7 +70,7 @@ exports.heartProductGetMid = async (req, res) => {
         if (productListPromise.length > 0) {
             res.status(200).json({ success: true, productList });
         } else if (productList.length === 0) {
-            res.status(404).json({ success: false, message: '해당 유저의 찜 내역이 없음' })
+            res.status(404).json({ success: true, message: '해당 유저의 찜 내역이 없음' })
         } else {
             res.status(400).json({ success: false, message: '하트 내역 불러오는 중 에러 발생' })
         }
@@ -79,3 +79,38 @@ exports.heartProductGetMid = async (req, res) => {
         res.status(500).json({ success: false, message: '하트 리스트 불러오는 중 서버 에러 발생' });
     }
 } 
+
+exports.heartFarmGetMid = async (req, res) => {
+    const user_code = req.params.user_code;
+
+    try{
+        const heartList = await Heart.findAll({
+            where: {
+                user_code,
+                product_category : 1
+            }
+        })
+        const codeValues = heartList.map(heartList => heartList.code);
+
+        const farmListPromise = codeValues.map(async code => {
+            const farmResult = await Farm.findAll ({where : {farm_code: code}});
+
+            const farmDataValues = farmResult.map(farmResult => farmResult.dataValues);
+            return{
+                farm: farmDataValues
+            };
+        });
+
+        const farmList = await Promise.all(farmListPromise);
+
+        if(farmList.length > 0){
+            res.status(200).json({success : true, farmList});
+        } else if (farmList.length === 0){
+            res.status(404).json({success : true, message: '해당 유저의 찜 내역이 없음'});
+        } else {
+            res.status(400).json({success: false, message: '하트 내역 불러오는 중 에러 발생'});
+        }
+    } catch(error){
+        res.status(500).json({success : false, message: '하트 리스트 불러오는 중 서버 에러 발생'});
+    }
+}

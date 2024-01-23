@@ -2,8 +2,8 @@ const { Farm, User} = require('../models');
 
 exports.registerPostMid = async (req, res) => {
     try{
+        const user_code = req.body.user_code;
         const user = await User.findOne({ where: { user_code } });
-
         const registerFarm = await Farm.create({
             ...req.body
         });

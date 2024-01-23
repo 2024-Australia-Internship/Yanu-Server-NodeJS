@@ -13,7 +13,7 @@ exports.createInfoPostMid = async (req, res) => {
             product_code: product_code,
             ...req.body
         });
-        res.status(201).json({ success: true, message: '제품 등록 성공', product_code: product_code});
+        res.status(201).json({ success: true, message: '제품 등록 성공', product_code: product_code });
     } catch (error) {
         res.status(500).json({ success: false, message: '서버 오류로 제품 등록 실패' });
     }
@@ -61,7 +61,7 @@ exports.createImagePostMid = async (req, res) => {
             try {
                 const createProductImg = await Product.update(
                     { product_image: fileInfos.toString() },
-                    { where: { user_code , product_code} }
+                    { where: { user_code, product_code } }
                 );
             } catch (error) {
                 console.error(error);
@@ -77,13 +77,24 @@ exports.createImagePostMid = async (req, res) => {
 exports.listGetMid = async (req, res) => {
     try {
         const products = await Product.findAll({});
+
+        // 각 제품의 0번째 이미지 파일명 가져오기
+        const firstProductImages = products.map(product => {
+            return product.product_image ? product.product_image.split(',')[0] : null;
+        });
+
+        // 각 0번째 이미지 파일명에서 이미지 URL 생성
+        const firstProductImageURL = firstProductImages.map(fileName => {
+            return fileName ? `http://192.168.1.115:3000/product_images/${fileName}` : null;
+        });
+
         if (products && products.length > 0) {
-            res.status(200).json({ success: true, products });
+            res.status(200).json({ success: true, products, firstProductImageURL });
         } else {
             res.status(404).json({ success: false, message: '조회된 제품이 없습니다.' });
         }
     } catch (error) {
-        console.log("Addfaf")
+        console.log(error)
         res.status(500).json({ success: false, message: '데이터베이스에서 제품 목록을 불러오는 중 오류 발생' });
     }
 }
@@ -96,7 +107,7 @@ exports.productcodeGetMid = async (req, res) => {
         });
         const { product_image } = infoProduct;
         const fileNames = product_image.split(",");
-        const images = fileNames.map((fileName) => `http://localhost:3000/product_images/${fileName}`);
+        const images = fileNames.map((fileName) => `http://192.168.1.115:3000/product_images/${fileName}`);
 
         if (infoProduct) {
             res.status(200).json({ success: true, infoProduct, images });

@@ -24,6 +24,9 @@ class Heart extends Sequelize.Model {
                     model: Product,
                     key: 'product_code'
                 },
+            },
+            product_category: {
+                type: DataTypes.BOOLEAN
             }
         }, {
             sequelize,

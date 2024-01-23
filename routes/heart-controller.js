@@ -2,11 +2,12 @@ const { Heart, Product, User } = require('../models');
 
 exports.heartPostMid = async (req, res) => {
     const product_code = req.params.product_code;
-    const user_code = req.body.user_code;
+    const {user_code, product_category} = req.body; //category는 bool, 0은 product, 1은 farm
+
     try {
         const createHeart = await Heart.create({
             product_code: product_code,
-            user_code: user_code
+            ...req.body
         });
         if (createHeart) {
             res.status(201).json({ success: true, message: '하트 등록 성공' });

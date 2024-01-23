@@ -35,6 +35,9 @@ class User extends Sequelize.Model {
         type: DataTypes.STRING(20),
         unique: true,
       },
+      user_ugly: {
+        type: DataTypes.INTEGER,
+      },
       is_farmer: {
         type: DataTypes.BOOLEAN,
       }

@@ -175,8 +175,10 @@ exports.productSearchGetMid = async (req, res) => {
             }
         })
         console.log(searchProduct)
-        if(searchProduct){
+        if(searchProduct.length > 0){
             res.status(200).json({ success: true, searchProduct });
+        } else {
+            res.status(404).json({ success: true, message: '검색 결과 없음' });
         }
     } catch (error) {
         console.log(error)

@@ -1,12 +1,12 @@
 const { Heart, Product, Farm, User } = require('../models');
 
 exports.heartPostMid = async (req, res) => {
-    const product_code = req.params.product_code;
+    const code = req.params.code;
     const { user_code, product_category } = req.body; //category는 bool, 0은 product, 1은 farm
 
     try {
         const createHeart = await Heart.create({
-            product_code: product_code,
+            code,
             ...req.body
         });
         if (createHeart) {
@@ -60,7 +60,7 @@ exports.heartGetMid = async (req, res) => {
             // 하트에 해당하는 제품을 찾기
             if (categoryInfo === 0) {
                 findResult = await Product.findAll({ where: { user_code: heart.dataValues.user_code } });
-            } else {
+            } else if (categoryInfo === 1){
                 findResult = await Farm.findAll({ where: { user_code: heart.dataValues.user_code } });
             }
 

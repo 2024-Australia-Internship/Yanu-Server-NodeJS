@@ -131,3 +131,34 @@ exports.productcodeGetMid = async (req, res) => {
         res.status(500).json({ success: false, message: '서버 오류로 제품 불러오기 실패' })
     }
 }
+
+exports.usercodeGetMid = async (req, res) => {
+    const user_code = req.params.user_code;
+
+    try{
+        const productList = await Product.findAll({
+            where : {user_code},
+        });
+
+        // 각 제품의 0번째 이미지 파일명 가져오기
+        const firstProductImages = productList.map(product => {
+            return product.product_image ? product.product_image.split(',')[0] : null;
+        });
+
+        // 각 0번째 이미지 파일명에서 이미지 URL 생성
+        const firstProductImageURL = firstProductImages.map(fileName => {
+            return fileName ? `http://localhost:3000/product_images/${fileName}` : null;
+        })
+    
+        if(productList.length > 0) {
+            res.status(200).json({ success: true, productList, firstProductImageURL });
+        } else {
+            res.status(404).json({ success: false, message : '해당 유저 제품 없음' });
+        }
+    } catch(error){
+        console.log(error)
+        res.status(500).json({success: false, message : '이미지 불러오는 중 서버 에러 발생'})
+    }
+
+
+}

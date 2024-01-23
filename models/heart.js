@@ -18,7 +18,7 @@ class Heart extends Sequelize.Model {
                     key: 'user_code',
                 },
             },
-            product_code: {
+            code: {
                 type: DataTypes.STRING(20),
                 reference: {
                     model: Product,

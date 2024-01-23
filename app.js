@@ -35,6 +35,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/product_images', express.static(path.join(__dirname, 'product_images')));
+app.use('/farm_images', express.static(path.join(__dirname, 'farm_images')));
+
 
 const users = require('./routes/user');
 app.use('/users', users);

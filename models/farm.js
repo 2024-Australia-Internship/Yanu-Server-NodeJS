@@ -23,9 +23,6 @@ class Farm extends Sequelize.Model {
       farmer_name: {
         type: DataTypes.STRING(50),
       },
-      farmer_name: {
-        type: DataTypes.STRING(20),
-      },
       farm_phonenumber : {
         type: DataTypes.STRING(50),
       },
@@ -34,7 +31,10 @@ class Farm extends Sequelize.Model {
       },
       farm_address: {
         type: DataTypes.STRING(120),
-      },
+      }, 
+      farm_image: {
+        type: DataTypes.STRING(100),
+      }
     },{
         sequelize,
         timestamps: false,

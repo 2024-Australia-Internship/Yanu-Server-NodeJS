@@ -1,5 +1,5 @@
 const { hasUncaughtExceptionCaptureCallback } = require('process');
-const { User } = require('../models');
+const { User, Farm} = require('../models');
 const { generateHashedPassword } = require('../utils/hashedPasword');
 const crypto = require('crypto');
 const multer = require('multer');
@@ -21,7 +21,7 @@ exports.registerPostMid = async (req, res) => {
             user_ugly: 0,
             is_farmer: false,
         });
-        res.status(201).json({ success: true, result: {user_code: user_code } });
+        res.status(201).json({ success: true, result: { user_code: user_code } });
     } catch (error) {
         console.log('회원가입 실패: ', error.message);
         res.status(404).json({ success: false, message: '서버 오류' });
@@ -165,12 +165,20 @@ exports.profileInfoPostMid = async (req, res) => {
 exports.usercodeGetMid = async (req, res) => {
     const user_code = req.params.user_code;
     const userAllInfo = await User.findAll({
-        attributes: ['user_email', 'user_phonenumber', 'profile_image', 'nickname', 'user_introduction', 'is_farmer'],
+        attributes: ['user_email', 'user_phonenumber', 'profile_image', 'nickname', 'user_introduction', 'user_ugly', 'is_farmer'],
         where: { user_code }
     });
-    if (userAllInfo) {
+
+    if (userAllInfo[0].dataValues.is_farmer) {
+        const farmInfo = await Farm.findOne({
+            attributes: ['business_name'],
+            where: { user_code }
+        });
+        res.status(200).json({success: true, userAllInfo, farmInfo});
+    } else if (userAllInfo) {
         res.status(200).json({ success: true, userAllInfo });
     } else {
         res.status(404).json({ success: false, message: '해당 user_code를 가진 사용자를 찾을 수 없음' });
     }
+
 }

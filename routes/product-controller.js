@@ -1,6 +1,8 @@
 const { Product, Farm, User } = require('../models');
 const multer = require('multer');
 const path = require('path');
+const { Sequelize } = require('sequelize');
+
 
 exports.createInfoPostMid = async (req, res) => {
     const { product_title, product_category, product_hashtag, product_price, product_weight, product_unit, product_description } = req.body;
@@ -110,13 +112,13 @@ exports.productcodeGetMid = async (req, res) => {
         const images = fileNames.map((fileName) => `http://192.168.1.115:3000/product_images/${fileName}`);
 
         const nickname = await User.findOne({
-            where : {user_code},
+            where: { user_code },
             attributes: ['nickname']
         });
         userInfo.push(nickname.nickname);
 
         const businessName = await Farm.findOne({
-            where : {user_code},
+            where: { user_code },
             attributes: ['business_name']
         })
         userInfo.push(businessName.business_name);
@@ -129,5 +131,82 @@ exports.productcodeGetMid = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({ success: false, message: '서버 오류로 제품 불러오기 실패' })
+    }
+}
+
+exports.usercodeGetMid = async (req, res) => {
+    const user_code = req.params.user_code;
+
+    try {
+        const productList = await Product.findAll({
+            where: { user_code },
+        });
+
+        // 각 제품의 0번째 이미지 파일명 가져오기
+        const firstProductImages = productList.map(product => {
+            return product.product_image ? product.product_image.split(',')[0] : null;
+        });
+
+        // 각 0번째 이미지 파일명에서 이미지 URL 생성
+        const firstProductImageURL = firstProductImages.map(fileName => {
+            return fileName ? `http://localhost:3000/product_images/${fileName}` : null;
+        })
+
+        if (productList.length > 0) {
+            res.status(200).json({ success: true, productList, firstProductImageURL });
+        } else {
+            res.status(404).json({ success: false, message: '해당 유저 제품 없음' });
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false, message: '이미지 불러오는 중 서버 에러 발생' })
+    }
+}
+
+exports.productSearchGetMid = async (req, res) => {
+    const keyword = req.params.keyword;
+
+    try {
+        const searchProduct = await Product.findAll({
+            where: {
+                product_title: {
+                    [Sequelize.Op.like]: `%${keyword}%`
+                }
+            }
+        })
+        console.log(searchProduct)
+        if(searchProduct.length > 0){
+            res.status(200).json({ success: true, searchProduct });
+        } else {
+            res.status(404).json({ success: true, message: '검색 결과 없음' });
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false });
+    }
+}
+
+exports.productCategorySearchGetMid = async (req, res) => {
+    const product_category = req.params.product_category==="vegetable" ? 0 : 1;
+    const keyword = req.params.keyword;
+
+    try {
+        const searchProduct = await Product.findAll({
+            where: {
+                product_title: {
+                    [Sequelize.Op.like]: `%${keyword}%`
+                },
+                product_category
+            }
+        })
+        console.log(searchProduct)
+        if(searchProduct.length > 0){
+            res.status(200).json({ success: true, searchProduct });
+        } else {
+            res.status(404).json({ success: true, message: '검색 결과 없음' });
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false });
     }
 }

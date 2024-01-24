@@ -51,7 +51,6 @@ exports.heartProductGetMid = async (req, res) => {
                 product_category: 0
             }
         })
-
         const codeValues = heartList.map(heartList => heartList.code);
 
         // 각 하트에 대한 제품 정보를 가져오는 배열을 생성
@@ -65,9 +64,16 @@ exports.heartProductGetMid = async (req, res) => {
 
         // Promise 배열을 모두 기다려 결과를 얻음
         const productList = await Promise.all(productListPromise);
+        const firstProductImages = productList.map(product => {
+            return product.product ? product.product[0].product_image.split(',')[0] : null;
+        });
 
+        const firstProductImageURL = firstProductImages.map(fileName => {
+            return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
+        })
+        
         if (productListPromise.length > 0) {
-            res.status(200).json({ success: true, productList });
+            res.status(200).json({ success: true, productList, firstProductImageURL });
         } else if (productList.length === 0) {
             res.status(404).json({ success: true, message: '해당 유저의 찜 내역이 없음' })
         } else {

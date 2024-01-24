@@ -56,8 +56,7 @@ exports.heartProductGetMid = async (req, res) => {
 
         // 각 하트에 대한 제품 정보를 가져오는 배열을 생성
         const productListPromise = codeValues.map(async code => {
-            const findResult = await Product.findAll({ where: { user_code: code } });
-
+            const findResult = await Product.findAll({ where: { user_code } });
             const productDataValues = findResult.map(findResult => findResult.dataValues);
             return {
                 product: productDataValues

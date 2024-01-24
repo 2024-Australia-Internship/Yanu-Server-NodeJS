@@ -78,18 +78,19 @@ exports.createImagePostMid = async (req, res) => {
 exports.listGetMid = async (req, res) => {
     try {
         const products = await Product.findAll({});
+        const farm_name = await Farm.findAll({attributes : ['business_name']});
         // 각 제품의 0번째 이미지 파일명 가져오기
-        const firstProductImages = products.map(product => {
-            return product.product_image ? product.product_image.split(',')[0] : null;
+        const firstProductImages = products.map(products => {
+            return products.product_image ? products.product_image.split(',')[0] : null;
         });
 
         // 각 0번째 이미지 파일명에서 이미지 URL 생성
         const firstProductImageURL = firstProductImages.map(fileName => {
-            return fileName ? `http://192.168.1.115:3000/product_images/${fileName}` : null;
+            return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
         });
 
         if (products && products.length > 0) {
-            res.status(200).json({ success: true, products, firstProductImageURL });
+            res.status(200).json({ success: true, products, firstProductImageURL, farm_name });
         } else {
             res.status(404).json({ success: false, message: '조회된 제품이 없습니다.' });
         }
@@ -109,7 +110,7 @@ exports.productcodeGetMid = async (req, res) => {
         });
         const { product_image } = infoProduct;
         const fileNames = product_image.split(",");
-        const images = fileNames.map((fileName) => `http://192.168.1.115:3000/product_images/${fileName}`);
+        const images = fileNames.map((fileName) => `http://192.168.1.121:3000/product_images/${fileName}`);
 
         const nickname = await User.findOne({
             where: { user_code },
@@ -149,7 +150,7 @@ exports.usercodeGetMid = async (req, res) => {
 
         // 각 0번째 이미지 파일명에서 이미지 URL 생성
         const firstProductImageURL = firstProductImages.map(fileName => {
-            return fileName ? `http://localhost:3000/product_images/${fileName}` : null;
+            return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
         })
 
         if (productList.length > 0) {

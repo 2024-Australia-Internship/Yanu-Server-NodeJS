@@ -169,14 +169,20 @@ exports.usercodeGetMid = async (req, res) => {
         where: { user_code }
     });
 
+    const profile_image_name = userAllInfo[0].dataValues.profile_image;
+    const profile_image = `http://192.168.1.115:3000/product_images/${profile_image_name}`;
+
     if (userAllInfo[0].dataValues.is_farmer) {
         const farmInfo = await Farm.findOne({
-            attributes: ['business_name'],
+            attributes: ['business_name', 'farm_image'],
             where: { user_code }
         });
-        res.status(200).json({success: true, userAllInfo, farmInfo});
+
+        const farm_image = farmInfo.dataValues.farm_image;
+        
+        res.status(200).json({success: true, userAllInfo, profile_image, farm_image, farmInfo});
     } else if (userAllInfo) {
-        res.status(200).json({ success: true, userAllInfo });
+        res.status(200).json({ success: true, userAllInfo, profile_image});
     } else {
         res.status(404).json({ success: false, message: '해당 user_code를 가진 사용자를 찾을 수 없음' });
     }

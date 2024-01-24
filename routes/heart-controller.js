@@ -22,15 +22,15 @@ exports.heartPostMid = async (req, res) => {
 
 exports.heartDeleteMid = async (req, res) => {
     const product_code = req.params.product_code;
-    const user_code = req.body.user_code;
-
+    const user_code = req.params.user_code;
     try {
         const deleteHeart = await Heart.destroy({
             where: {
-                product_code: product_code,
+                code: product_code,
                 user_code: user_code
             }
         });
+
         if (deleteHeart) {
             res.status(201).json({ success: true, message: '하트 삭제 성공' });
         } else {

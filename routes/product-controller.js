@@ -1,3 +1,4 @@
+const { copyFileSync } = require('fs');
 const { Product, Farm, User } = require('../models');
 const multer = require('multer');
 const path = require('path');
@@ -76,9 +77,9 @@ exports.createImagePostMid = async (req, res) => {
 };
 
 exports.listGetMid = async (req, res) => {
+    const farmName = [];
     try {
         const products = await Product.findAll({});
-        const farm_name = await Farm.findAll({attributes : ['business_name']});
         // 각 제품의 0번째 이미지 파일명 가져오기
         const firstProductImages = products.map(products => {
             return products.product_image ? products.product_image.split(',')[0] : null;
@@ -89,8 +90,22 @@ exports.listGetMid = async (req, res) => {
             return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
         });
 
+        const userCodeList = products.map(products=>{
+            return products.user_code;
+        })
+
+        const farmNamePromises = userCodeList.map(userCode => {
+            return Farm.findOne({ attributes: ['business_name'], where: { user_code: userCode } });
+        });
+
+        const resolvedFarmNames = await Promise.all(farmNamePromises);
+
+        for(let i=0; i<resolvedFarmNames.length; i++){
+            farmName.push(resolvedFarmNames[i].dataValues.business_name)
+        }
+
         if (products && products.length > 0) {
-            res.status(200).json({ success: true, products, firstProductImageURL, farm_name });
+            res.status(200).json({ success: true, products, firstProductImageURL, farmName});
         } else {
             res.status(404).json({ success: false, message: '조회된 제품이 없습니다.' });
         }
@@ -175,9 +190,16 @@ exports.productSearchGetMid = async (req, res) => {
                 }
             }
         })
-        console.log(searchProduct)
+        const firstProductImages = searchProduct.map(products => {
+            return products.product_image.split(',')[0]
+        })
+
+        const firstProductImageURL = firstProductImages.map(fileName => {
+            return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
+        }); 
+
         if(searchProduct.length > 0){
-            res.status(200).json({ success: true, searchProduct });
+            res.status(200).json({ success: true, searchProduct, firstProductImageURL });
         } else {
             res.status(404).json({ success: true, message: '검색 결과 없음' });
         }
@@ -200,9 +222,17 @@ exports.productCategorySearchGetMid = async (req, res) => {
                 product_category
             }
         })
-        console.log(searchProduct)
+
+        const firstProductImages = searchProduct.map(products => {
+            return products.product_image.split(',')[0]
+        })
+
+        const firstProductImageURL = firstProductImages.map(fileName => {
+            return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
+        }); 
+
         if(searchProduct.length > 0){
-            res.status(200).json({ success: true, searchProduct });
+            res.status(200).json({ success: true, searchProduct, firstProductImageURL });
         } else {
             res.status(404).json({ success: true, message: '검색 결과 없음' });
         }

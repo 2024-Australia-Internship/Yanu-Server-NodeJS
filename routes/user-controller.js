@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const multer = require('multer');
 const path = require('path');
 const { unwatchFile } = require('fs');
+const { log } = require('console');
 
 //회원가입
 exports.registerPostMid = async (req, res) => {
@@ -34,7 +35,7 @@ exports.loginPostMid = async (req, res) => {
     try {
         const hashedPassword = await generateHashedPassword(user_pw, salt);
         const loginUser = await User.findOne({
-            attributes: ['user_email', 'user_code'],
+            attributes: ['id', 'user_email'],
             where: {
                 user_pw: hashedPassword
             }
@@ -42,7 +43,7 @@ exports.loginPostMid = async (req, res) => {
 
         if (loginUser) {
             console.log("로그인 성공");
-            req.session.user_code = loginUser.user_code;
+            req.session.user_id = loginUser.user_id;
             req.session.save((err) => {
                 if (err) {
                     console.error('세션 저장 오류:', err);
@@ -50,7 +51,7 @@ exports.loginPostMid = async (req, res) => {
                     console.log('세션 저장 완료');
                 }
             });
-            res.status(200).json({ success: true, result: { user_email: user_email, user_code: loginUser.user_code } });
+            res.status(200).json({ success: true, results: { user_id: loginUser.id, user_email: user_email } });
         } else {
             console.log("비밀번호가 일치하지 않음");
             res.status(404).json({ success: false, message: '비밀번호가 일치하지 않습니다' });
@@ -87,10 +88,9 @@ exports.forgetPasswordPatchMid = async (req, res) => {
         const salt = crypto.randomBytes(128).toString('base64');
         const hashedPassword = await generateHashedPassword(new_password, salt);
         const newPassword = await User.update(
-            { new_password: hashedPassword, user_salt: salt },
+            { user_pw: hashedPassword, user_salt: salt },
             { where: { user_email } }
         );
-        console.log(newPassword)
         if (newPassword[0] === 1) {
             res.status(201).json({ success: true, message: '비밀번호 변경 성공' });
         } else {

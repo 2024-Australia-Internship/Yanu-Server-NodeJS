@@ -11,12 +11,8 @@ class Product extends Sequelize.Model {
         primaryKey: true,
         allowNull: false,
       },
-      user_code: {
+      user_id: {
         type: DataTypes.STRING(45),
-        reference: {
-          model: User,
-          key: 'user_code',
-        },
       },
       product_image: {
         type: DataTypes.STRING(500),
@@ -38,10 +34,6 @@ class Product extends Sequelize.Model {
       },
       product_unit: {
         type: DataTypes.STRING(20),
-      },
-      product_code: {
-        type: DataTypes.STRING(10),
-        unique: true,
       },
       product_description: {
         type: DataTypes.TEXT,

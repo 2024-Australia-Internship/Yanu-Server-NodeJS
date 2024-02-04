@@ -9,13 +9,9 @@ class Farm extends Sequelize.Model {
         primaryKey: true,
         allowNull: false,
       },
-      user_code: {
+      user_id: {
         type: DataTypes.STRING(45),
         unique: true,
-      },
-      farm_code: {
-        type: DataTypes.STRING(45),
-
       },
       business_name: {
         type: DataTypes.STRING(80),

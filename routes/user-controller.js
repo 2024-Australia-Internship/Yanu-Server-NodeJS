@@ -10,18 +10,17 @@ const { unwatchFile } = require('fs');
 exports.registerPostMid = async (req, res) => {
     try {
         const { user_email, user_pw, user_phonenumber } = req.body;
-        const user_code = req.code;
         const salt = crypto.randomBytes(128).toString('base64');
         const hashedPassword = await generateHashedPassword(user_pw, salt);
         const newUser = await User.create({
             ...req.body,
             user_pw: hashedPassword,
             user_salt: salt,
-            user_code: user_code,
             user_ugly: 0,
             is_farmer: false,
         });
-        res.status(201).json({ success: true, result: { user_code: user_code } });
+        const user_id = newUser.dataValues.id;
+        res.status(201).json({ success: true, user_id : user_id });
     } catch (error) {
         console.log('회원가입 실패: ', error.message);
         res.status(404).json({ success: false, message: '서버 오류' });

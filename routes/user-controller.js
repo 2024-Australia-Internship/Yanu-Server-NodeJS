@@ -103,24 +103,21 @@ exports.forgetPasswordPatchMid = async (req, res) => {
 
 //프르필 이미지 업로드
 exports.profilePostMid = async (req, res) => {
-    const user_code = req.params.user_code;
-    console.log(user_code)
-    console.log("Received request for user_code:", user_code);
     //이미지 저장 디렉토리 설정
     const storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, 'uploads/');
+            cb(null, 'profiles/');
         },
         filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + "_profile_" + user_code;
-            cb(null, uniqueSuffix + path.extname(file.originalname));
+            const profileDir = Date.now() + file.originalname;
+            cb(null, profileDir);
         }
     });
     const upload = multer({ storage: storage }).single('profile_image');
 
     //multer 업로드 함수 호출
     upload(req, res, async function (err) {
-
+        const user_id = req.body.user_id;
         if (err instanceof multer.MulterError) {
             console.log("Multer Error:", err);
             return res.status(500).json({ success: false, message: '이미지 업로드 실패' });
@@ -133,7 +130,7 @@ exports.profilePostMid = async (req, res) => {
 
         const register_img_url = await User.update(
             { profile_image: image_url },
-            { where: { user_code } }
+            { where: { id : user_id } }
         );
 
         if (register_img_url) {

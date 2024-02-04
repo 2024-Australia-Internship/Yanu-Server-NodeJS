@@ -33,7 +33,7 @@ sequelize.sync({ force: false })
 
 app.use(morgan('dev')); //http 요펑 로깅을 위한 미들웨어
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/product_images', express.static(path.join(__dirname, 'product_images')));
 app.use('/farm_images', express.static(path.join(__dirname, 'farm_images')));

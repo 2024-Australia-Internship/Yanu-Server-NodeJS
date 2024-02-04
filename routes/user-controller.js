@@ -143,11 +143,10 @@ exports.profilePostMid = async (req, res) => {
 
 //닉네임과 코멘트 입력
 exports.profileInfoPostMid = async (req, res) => {
-    const user_code = req.params.user_code;
-    const { nickname, user_introduction } = req.body;
+    const { user_id, nickname, user_introduction } = req.body;
     const register_img_url = await User.update(
         { nickname: nickname, user_introduction: user_introduction },
-        { where: { user_code } }
+        { where: { id : user_id } }
     );
 
     if (register_img_url) {

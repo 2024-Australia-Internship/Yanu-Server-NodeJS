@@ -7,6 +7,6 @@ router.post('/login', saltMiddleware, usersMiddleware.loginPostMid);
 router.post('/check/email', usersMiddleware.checkEmailPostMid);
 router.patch('/forget/password', usersMiddleware.forgetPasswordPatchMid);
 router.post('/profile', usersMiddleware.profilePostMid);
-router.post('/:user_code/profile/info', usersMiddleware.profileInfoPostMid);
+router.post('/profile/info', usersMiddleware.profileInfoPostMid);
 router.get('/:user_code', usersMiddleware.usercodeGetMid);
 module.exports = router;

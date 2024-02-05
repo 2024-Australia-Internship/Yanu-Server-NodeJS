@@ -1,27 +1,27 @@
 const { hasUncaughtExceptionCaptureCallback } = require('process');
-const { User, Farm} = require('../models');
+const { User, Farm } = require('../models');
 const { generateHashedPassword } = require('../utils/hashedPasword');
 const crypto = require('crypto');
 const multer = require('multer');
 const path = require('path');
 const { unwatchFile } = require('fs');
+const { log } = require('console');
 
 //회원가입
 exports.registerPostMid = async (req, res) => {
     try {
         const { user_email, user_pw, user_phonenumber } = req.body;
-        const user_code = req.code;
         const salt = crypto.randomBytes(128).toString('base64');
         const hashedPassword = await generateHashedPassword(user_pw, salt);
         const newUser = await User.create({
             ...req.body,
             user_pw: hashedPassword,
             user_salt: salt,
-            user_code: user_code,
             user_ugly: 0,
             is_farmer: false,
         });
-        res.status(201).json({ success: true, result: { user_code: user_code } });
+        const user_id = newUser.dataValues.id;
+        res.status(201).json({ success: true, user_id : user_id });
     } catch (error) {
         console.log('회원가입 실패: ', error.message);
         res.status(404).json({ success: false, message: '서버 오류' });
@@ -35,7 +35,7 @@ exports.loginPostMid = async (req, res) => {
     try {
         const hashedPassword = await generateHashedPassword(user_pw, salt);
         const loginUser = await User.findOne({
-            attributes: ['user_email', 'user_code'],
+            attributes: ['id', 'user_email'],
             where: {
                 user_pw: hashedPassword
             }
@@ -43,7 +43,7 @@ exports.loginPostMid = async (req, res) => {
 
         if (loginUser) {
             console.log("로그인 성공");
-            req.session.user_code = loginUser.user_code;
+            req.session.user_id = loginUser.user_id;
             req.session.save((err) => {
                 if (err) {
                     console.error('세션 저장 오류:', err);
@@ -51,7 +51,7 @@ exports.loginPostMid = async (req, res) => {
                     console.log('세션 저장 완료');
                 }
             });
-            res.status(200).json({ success: true, result: { user_email: user_email, user_code: loginUser.user_code } });
+            res.status(200).json({ success: true, results: { user_id: loginUser.id, user_email: user_email } });
         } else {
             console.log("비밀번호가 일치하지 않음");
             res.status(404).json({ success: false, message: '비밀번호가 일치하지 않습니다' });
@@ -88,10 +88,9 @@ exports.forgetPasswordPatchMid = async (req, res) => {
         const salt = crypto.randomBytes(128).toString('base64');
         const hashedPassword = await generateHashedPassword(new_password, salt);
         const newPassword = await User.update(
-            { new_password: hashedPassword, user_salt: salt },
+            { user_pw: hashedPassword, user_salt: salt },
             { where: { user_email } }
         );
-        console.log(newPassword)
         if (newPassword[0] === 1) {
             res.status(201).json({ success: true, message: '비밀번호 변경 성공' });
         } else {
@@ -104,24 +103,21 @@ exports.forgetPasswordPatchMid = async (req, res) => {
 
 //프르필 이미지 업로드
 exports.profilePostMid = async (req, res) => {
-    const user_code = req.params.user_code;
-    console.log(user_code)
-    console.log("Received request for user_code:", user_code);
     //이미지 저장 디렉토리 설정
     const storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, 'uploads/');
+            cb(null, 'profiles/');
         },
         filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + "_profile_" + user_code;
-            cb(null, uniqueSuffix + path.extname(file.originalname));
+            const profileDir = Date.now() + file.originalname;
+            cb(null, profileDir);
         }
     });
     const upload = multer({ storage: storage }).single('profile_image');
 
     //multer 업로드 함수 호출
     upload(req, res, async function (err) {
-
+        const user_id = req.body.user_id;
         if (err instanceof multer.MulterError) {
             console.log("Multer Error:", err);
             return res.status(500).json({ success: false, message: '이미지 업로드 실패' });
@@ -134,7 +130,7 @@ exports.profilePostMid = async (req, res) => {
 
         const register_img_url = await User.update(
             { profile_image: image_url },
-            { where: { user_code } }
+            { where: { id : user_id } }
         );
 
         if (register_img_url) {
@@ -147,11 +143,10 @@ exports.profilePostMid = async (req, res) => {
 
 //닉네임과 코멘트 입력
 exports.profileInfoPostMid = async (req, res) => {
-    const user_code = req.params.user_code;
-    const { nickname, user_introduction } = req.body;
+    const { user_id, nickname, user_introduction } = req.body;
     const register_img_url = await User.update(
         { nickname: nickname, user_introduction: user_introduction },
-        { where: { user_code } }
+        { where: { id : user_id } }
     );
 
     if (register_img_url) {
@@ -170,7 +165,7 @@ exports.usercodeGetMid = async (req, res) => {
     });
 
     const profile_image_name = userAllInfo[0].dataValues.profile_image;
-    const profile_image = `http://192.168.1.115:3000/product_images/${profile_image_name}`;
+    const profile_image = `http://192.168.1.121:3000/uploads/${profile_image_name}`;
 
     if (userAllInfo[0].dataValues.is_farmer) {
         const farmInfo = await Farm.findOne({
@@ -178,11 +173,13 @@ exports.usercodeGetMid = async (req, res) => {
             where: { user_code }
         });
 
-        const farm_image = farmInfo.dataValues.farm_image;
-        
-        res.status(200).json({success: true, userAllInfo, profile_image, farm_image, farmInfo});
+        const farm_image_name = farmInfo.dataValues.farm_image;
+        const farm_image = `http://192.168.1.121:3000/farm_images/${farm_image_name}`;
+        console.log(farm_image)
+
+        res.status(200).json({ success: true, userAllInfo, profile_image, farm_image, farmInfo });
     } else if (userAllInfo) {
-        res.status(200).json({ success: true, userAllInfo, profile_image});
+        res.status(200).json({ success: true, userAllInfo, profile_image });
     } else {
         res.status(404).json({ success: false, message: '해당 user_code를 가진 사용자를 찾을 수 없음' });
     }

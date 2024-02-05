@@ -11,7 +11,7 @@ class Heart extends Sequelize.Model {
                 primaryKey: true,
                 allowNull: false,
             },
-            user_code: {
+            user_id: {
                 type: DataTypes.STRING(20),
                 reference: {
                     model: User,

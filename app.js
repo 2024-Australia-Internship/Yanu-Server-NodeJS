@@ -8,6 +8,7 @@ const app = express();
 const port = 3000;
 
 const { sequelize } = require('./models'); //sequlize 인스턴스 불러오기
+const { swaggerUi, specs } = require("./swagger/swagger");
 
 app.use(express.json());
 app.use(cors());
@@ -32,7 +33,7 @@ sequelize.sync({ force: false })
 
 app.use(morgan('dev')); //http 요펑 로깅을 위한 미들웨어
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/product_images', express.static(path.join(__dirname, 'product_images')));
 app.use('/farm_images', express.static(path.join(__dirname, 'farm_images')));
@@ -49,6 +50,9 @@ app.use('/farms', farms);
 
 const hearts = require ('./routes/heart');
 app.use('/hearts', hearts);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
+
 
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');

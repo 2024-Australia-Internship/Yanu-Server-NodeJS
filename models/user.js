@@ -31,10 +31,6 @@ class User extends Sequelize.Model {
       user_introduction: {
         type: DataTypes.TEXT,
       },
-      user_code: {
-        type: DataTypes.STRING(20),
-        unique: true,
-      },
       user_ugly: {
         type: DataTypes.INTEGER,
       },

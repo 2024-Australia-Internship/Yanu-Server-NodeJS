@@ -12,7 +12,7 @@ class Product extends Sequelize.Model {
       user_id: {
         type: DataTypes.INTEGER,
         references:{
-          model : 'User',
+          model : 'users',
           key : 'id'
         }
       },

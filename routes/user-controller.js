@@ -156,21 +156,23 @@ exports.profileInfoPostMid = async (req, res) => {
     }
 }
 
-//usercode로 모든 정보 불러오기
+//user_id로 모든 정보 불러오기
 exports.usercodeGetMid = async (req, res) => {
-    const user_code = req.params.user_code;
+    const user_id = req.params.user_id;
+    //필요한 모든 정보 불러오기
     const userAllInfo = await User.findAll({
         attributes: ['user_email', 'user_phonenumber', 'profile_image', 'nickname', 'user_introduction', 'user_ugly', 'is_farmer'],
-        where: { user_code }
+        where: { id: user_id },
     });
 
     const profile_image_name = userAllInfo[0].dataValues.profile_image;
     const profile_image = `http://192.168.1.121:3000/uploads/${profile_image_name}`;
 
+    //농부일때 필요한 정보 더 불러오기
     if (userAllInfo[0].dataValues.is_farmer) {
         const farmInfo = await Farm.findOne({
             attributes: ['business_name', 'farm_image'],
-            where: { user_code }
+            where: { user_id }
         });
 
         const farm_image_name = farmInfo.dataValues.farm_image;

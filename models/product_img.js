@@ -12,7 +12,7 @@ class Product_Img extends Sequelize.Model {
       product_id: {
         type: DataTypes.INTEGER,
         references:{
-          model : 'Product',
+          model : 'products',
           key : 'id'
         }
       },

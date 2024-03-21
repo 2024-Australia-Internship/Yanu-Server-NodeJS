@@ -12,14 +12,14 @@ class Favorite extends Sequelize.Model {
             user_id: {
                 type: DataTypes.INTEGER,
                 reference: {
-                    model: 'User',
+                    model: 'users',
                     key: 'id',
                 }
             },
             product_id: {
                 type: DataTypes.INTEGER,
                 reference: {
-                    model: 'Product',
+                    model: 'products',
                     key: 'id'
                 }
             },
@@ -39,4 +39,4 @@ class Favorite extends Sequelize.Model {
     }
 }
 
-module.exports = Heart;
+module.exports = Favorite;

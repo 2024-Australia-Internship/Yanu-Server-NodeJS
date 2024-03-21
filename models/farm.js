@@ -13,7 +13,7 @@ class Farm extends Sequelize.Model {
         type: DataTypes.INTEGER,
         uniqe: true,
         reference: {
-          model: 'User',
+          model: 'users',
           key: 'id',
         }
       },

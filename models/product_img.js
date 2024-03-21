@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-class Product extends Sequelize.Model {
+class Product_Img extends Sequelize.Model {
   static init(sequelize) {
     return super.init({
       id: {
@@ -23,8 +23,8 @@ class Product extends Sequelize.Model {
       sequelize,
       timestamps: false,
       underscored: false,
-      modelName: 'Product',
-      tableName: 'products',
+      modelName: 'Product_Img',
+      tableName: 'products_img',
       paranoid: false,
       charset: 'utf8',
       collate: 'utf8_general_ci'
@@ -33,4 +33,4 @@ class Product extends Sequelize.Model {
 }
 
 
-module.exports = Product;
+module.exports = Product_Img;

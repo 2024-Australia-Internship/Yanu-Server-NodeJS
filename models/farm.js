@@ -10,36 +10,40 @@ class Farm extends Sequelize.Model {
         allowNull: false,
       },
       user_id: {
-        type: DataTypes.STRING(45),
-        unique: true,
+        type: DataTypes.INTEGER,
+        uniqe: true,
+        reference: {
+          model: 'User',
+          key: 'id',
+        }
       },
       business_name: {
         type: DataTypes.STRING(80),
       },
-      farmer_name: {
+      farm_name: {
         type: DataTypes.STRING(50),
       },
-      farm_phonenumber : {
+      phonenumber: {
         type: DataTypes.STRING(50),
       },
-      farm_email: {
+      email: {
         type: DataTypes.STRING(40),
       },
-      farm_address: {
+      address: {
         type: DataTypes.STRING(120),
-      }, 
+      },
       farm_image: {
         type: DataTypes.STRING(100),
       }
-    },{
-        sequelize,
-        timestamps: false,
-        underscored: false,
-        modelName: 'Farm',
-        tableName: 'Farms',
-        paranoid: false,
-        charset: 'utf8',
-        collate: 'utf8_general_ci'
+    }, {
+      sequelize,
+      timestamps: false,
+      underscored: false,
+      modelName: 'Farm',
+      tableName: 'Farms',
+      paranoid: false,
+      charset: 'utf8',
+      collate: 'utf8_general_ci'
     });
   }
 }

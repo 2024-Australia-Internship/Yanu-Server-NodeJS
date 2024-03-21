@@ -11,8 +11,8 @@ class Farm extends Sequelize.Model {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        uniqe: true,
-        reference: {
+        unique: true,
+        references: {
           model: 'users',
           key: 'id',
         }
@@ -40,7 +40,7 @@ class Farm extends Sequelize.Model {
       timestamps: false,
       underscored: false,
       modelName: 'Farm',
-      tableName: 'Farms',
+      tableName: 'farms',
       paranoid: false,
       charset: 'utf8',
       collate: 'utf8_general_ci'

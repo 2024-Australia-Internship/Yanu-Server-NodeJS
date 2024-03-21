@@ -18,7 +18,7 @@ class Favorite extends Sequelize.Model {
             },
             product_id: {
                 type: DataTypes.INTEGER,
-                reference: {
+                references: {
                     model: 'products',
                     key: 'id'
                 }

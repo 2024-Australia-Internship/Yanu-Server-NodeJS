@@ -1,8 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const User = require('./user');
-const Product = require('./product');
 
-class Heart extends Sequelize.Model {
+class Favorite extends Sequelize.Model {
     static init(sequelize) {
         return super.init({
             id: {
@@ -12,28 +10,28 @@ class Heart extends Sequelize.Model {
                 allowNull: false,
             },
             user_id: {
-                type: DataTypes.STRING(20),
+                type: DataTypes.INTEGER,
                 reference: {
-                    model: User,
-                    key: 'user_code',
-                },
+                    model: 'User',
+                    key: 'id',
+                }
             },
-            code: {
-                type: DataTypes.STRING(20),
+            product_id: {
+                type: DataTypes.INTEGER,
                 reference: {
-                    model: Product,
-                    key: 'product_code'
-                },
+                    model: 'Product',
+                    key: 'id'
+                }
             },
-            product_category: {
-                type: DataTypes.BOOLEAN
+            type: {
+                type: DataTypes.STRING(20)
             }
         }, {
             sequelize,
             timestamps: false,
             underscored: false,
-            modelName: 'Heart',
-            tableName: 'hearts',
+            modelName: 'Favorite',
+            tableName: 'favorites',
             paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci'

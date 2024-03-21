@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const User = require('./user');
 const Product = require('./product');
+const Product_Img = require('./product_img');
 const Farm = require('./farm');
 const Heart = require('./heart');
 
@@ -13,11 +14,13 @@ db.sequelize = sequelize;
 
 db.User = User;
 db.Product = Product;
+db.Product_Img = Product_Img;
 db.Farm = Farm;
 db.Heart = Heart;
 
 User.init(sequelize);
 Product.init(sequelize);
+Product_Img.init(sequelize);
 Farm.init(sequelize);
 Heart.init(sequelize);
 

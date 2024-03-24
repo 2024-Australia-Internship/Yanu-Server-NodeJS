@@ -9,17 +9,17 @@ class User extends Sequelize.Model {
         primaryKey: true,
         allowNull: false,
       },
-      user_email: {
+      email: {
         type: DataTypes.STRING(45),
         unique: true,
       },
-      user_pw: {
+      password: {
         type: DataTypes.BLOB,
       },
-      user_salt: {
+      password_salt: {
         type: DataTypes.BLOB,
       },
-      user_phonenumber: {
+      phonenumber: {
         type: DataTypes.STRING(50),
       },
       profile_image: {
@@ -28,7 +28,7 @@ class User extends Sequelize.Model {
       nickname: {
         type: DataTypes.STRING(50),
       },
-      user_introduction: {
+      introduction: {
         type: DataTypes.TEXT,
       },
       user_ugly: {
@@ -37,17 +37,21 @@ class User extends Sequelize.Model {
       is_farmer: {
         type: DataTypes.BOOLEAN,
       }
-    },{
-        sequelize,
-        timestamps: false,
-        underscored: false,
-        modelName: 'User',
-        tableName: 'users',
-        paranoid: false,
-        charset: 'utf8',
-        collate: 'utf8_general_ci'
+    }, {
+      sequelize,
+      timestamps: false,
+      underscored: false,
+      modelName: 'User',
+      tableName: 'users',
+      paranoid: false,
+      charset: 'utf8',
+      collate: 'utf8_general_ci'
     });
   }
+};
+
+User.associate = models => {
+  this.Users.hasOne(models.Farm, {foreignKey: "user_id", sourceKey: 'id'});
 }
 
 module.exports = User;

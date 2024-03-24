@@ -11,7 +11,7 @@ class Favorite extends Sequelize.Model {
             },
             user_id: {
                 type: DataTypes.INTEGER,
-                reference: {
+                references: {
                     model: 'users',
                     key: 'id',
                 }

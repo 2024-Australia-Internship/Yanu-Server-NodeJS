@@ -37,17 +37,21 @@ class User extends Sequelize.Model {
       is_farmer: {
         type: DataTypes.BOOLEAN,
       }
-    },{
-        sequelize,
-        timestamps: false,
-        underscored: false,
-        modelName: 'User',
-        tableName: 'users',
-        paranoid: false,
-        charset: 'utf8',
-        collate: 'utf8_general_ci'
+    }, {
+      sequelize,
+      timestamps: false,
+      underscored: false,
+      modelName: 'User',
+      tableName: 'users',
+      paranoid: false,
+      charset: 'utf8',
+      collate: 'utf8_general_ci'
     });
   }
+};
+
+User.associate = models => {
+  this.Users.hasOne(models.Farm, {foreignKey: "user_id", sourceKey: 'id'});
 }
 
 module.exports = User;

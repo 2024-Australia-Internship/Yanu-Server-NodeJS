@@ -36,8 +36,8 @@ class Review extends Sequelize.Model {
             sequelize,
             timestamps: false,
             underscored: false,
-            modelName: 'Favorite',
-            tableName: 'favorites',
+            modelName: 'Review',
+            tableName: 'reviews',
             paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci'

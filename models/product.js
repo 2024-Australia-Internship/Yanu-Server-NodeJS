@@ -36,6 +36,9 @@ class Product extends Sequelize.Model {
       },
       product_description: {
         type: DataTypes.TEXT,
+      },
+      image: {
+        type: DataTypes.STRING(200)
       }
     }, {
       sequelize,

@@ -10,13 +10,13 @@ const { log } = require('console');
 //회원가입
 exports.registerPostMid = async (req, res) => {
     try {
-        const { user_email, user_pw, user_phonenumber } = req.body;
+        const { email, password, phonenumber } = req.body;
         const salt = crypto.randomBytes(128).toString('base64');
-        const hashedPassword = await generateHashedPassword(user_pw, salt);
+        const hashedPassword = await generateHashedPassword(password, salt);
         const newUser = await User.create({
             ...req.body,
-            user_pw: hashedPassword,
-            user_salt: salt,
+            password: hashedPassword,
+            password_salt: salt,
             user_ugly: 0,
             is_farmer: false,
         });
@@ -30,14 +30,14 @@ exports.registerPostMid = async (req, res) => {
 
 //로그인
 exports.loginPostMid = async (req, res) => {
-    const { user_email, user_pw } = req.body;
+    const { email, password } = req.body;
     const salt = req.salt;
     try {
-        const hashedPassword = await generateHashedPassword(user_pw, salt);
+        const hashedPassword = await generateHashedPassword(password, salt);
         const loginUser = await User.findOne({
-            attributes: ['id', 'user_email'],
+            attributes: ['id', 'email'],
             where: {
-                user_pw: hashedPassword
+                password: hashedPassword
             }
         });
 
@@ -51,7 +51,7 @@ exports.loginPostMid = async (req, res) => {
                     console.log('세션 저장 완료');
                 }
             });
-            res.status(200).json({ success: true, results: { user_id: loginUser.id, user_email: user_email } });
+            res.status(200).json({ success: true, results: { user_id: loginUser.id, user_email: email } });
         } else {
             console.log("비밀번호가 일치하지 않음");
             res.status(404).json({ success: false, message: '비밀번호가 일치하지 않습니다' });
@@ -64,11 +64,11 @@ exports.loginPostMid = async (req, res) => {
 
 //올바른 이메일을 입력했는지?
 exports.checkEmailPostMid = async (req, res) => {
-    const { user_email } = req.body;
+    const { email } = req.body;
     try {
         const checkEmail = await User.findOne({
-            attributes: ['user_email'],
-            where: { user_email }
+            attributes: ['email'],
+            where: { email }
         });
         if (checkEmail) {
             res.status(409).json({ success: false, message: '중복된 이메일 입력' });
@@ -143,9 +143,9 @@ exports.profilePostMid = async (req, res) => {
 
 //닉네임과 코멘트 입력
 exports.profileInfoPostMid = async (req, res) => {
-    const { user_id, nickname, user_introduction } = req.body;
+    const { user_id, nickname, introduction } = req.body;
     const register_img_url = await User.update(
-        { nickname: nickname, user_introduction: user_introduction },
+        { nickname: nickname, introduction: introduction },
         { where: { id : user_id } }
     );
 
@@ -161,7 +161,7 @@ exports.usercodeGetMid = async (req, res) => {
     const user_id = req.params.user_id;
     //필요한 모든 정보 불러오기
     const userAllInfo = await User.findAll({
-        attributes: ['user_email', 'user_phonenumber', 'profile_image', 'nickname', 'user_introduction', 'user_ugly', 'is_farmer'],
+        attributes: ['email', 'phonenumber', 'profile_image', 'nickname', 'introduction', 'user_ugly', 'is_farmer'],
         where: { id: user_id },
     });
 

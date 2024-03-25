@@ -19,9 +19,6 @@ class Product extends Sequelize.Model {
       title: {
         type: DataTypes.STRING(50),
       },
-      product_title: {
-        type: DataTypes.STRING(50),
-      },
       category: {
         type: DataTypes.STRING(20),
       },

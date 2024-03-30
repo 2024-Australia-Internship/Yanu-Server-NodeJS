@@ -60,12 +60,11 @@ exports.productGetMid = async (req, res) => {
     const farmName = [];
     try {
         const products = await Product.findAll({});
-        // 각 제품의 0번째 이미지 파일명 가져오기
+
         const firstProductImages = products.map(products => {
             return products.product_image ? products.product_image.split(',')[0] : null;
         });
 
-        // 각 0번째 이미지 파일명에서 이미지 URL 생성
         const firstProductImageURL = firstProductImages.map(fileName => {
             return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
         });
@@ -138,12 +137,10 @@ exports.userGetMid = async (req, res) => {
             where: { user_code },
         });
 
-        // 각 제품의 0번째 이미지 파일명 가져오기
         const firstProductImages = productList.map(product => {
             return product.product_image ? product.product_image.split(',')[0] : null;
         });
 
-        // 각 0번째 이미지 파일명에서 이미지 URL 생성
         const firstProductImageURL = firstProductImages.map(fileName => {
             return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
         })

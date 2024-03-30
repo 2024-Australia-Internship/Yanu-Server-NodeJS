@@ -3,6 +3,7 @@ const { Product, Farm, User } = require('../models');
 const multer = require('multer');
 const path = require('path');
 const { Sequelize } = require('sequelize');
+const configureMulter = require('../utils/multer');
 
 
 exports.infoPostMid = async (req, res) => {
@@ -10,7 +11,7 @@ exports.infoPostMid = async (req, res) => {
         const createProduct = await Product.create({
             ...req.body
         });
-        res.status(201).json({ success: true, message: '제품 등록 성공'});
+        res.status(201).json({ success: true, message: '제품 등록 성공' });
     } catch (error) {
         console.log(error)
         res.status(500).json({ success: false, message: '서버 오류로 제품 등록 실패' });
@@ -19,57 +20,41 @@ exports.infoPostMid = async (req, res) => {
 }
 
 exports.imagePostMid = async (req, res) => {
-    const user_code = req.params.user_code;
-    const product_code = req.params.product_code;
+    const user_id = req.params.user_id;
+    const id = req.params.product_id;
+
     const fileInfos = [];
-
-    // 이미지 저장 디렉토리 설정
-    const storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, 'product_images/');
-        },
-        filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + "_product_" + user_code;
-            cb(null, uniqueSuffix + path.extname(file.originalname));
-        }
-    });
-
-    const upload = multer({ storage: storage });
-
     try {
-        // 이미지 업로드
+        const upload = configureMulter('product_images/', '_product_');
+
         upload.array('images', 5)(req, res, async (err) => {
             if (err instanceof multer.MulterError) {
                 return res.status(400).json({ success: false, message: '이미지 업로드 중 오류 발생' });
             } else if (err) {
                 return res.status(500).json({ success: false, message: '서버 오류로 이미지 업로드 실패' });
             }
-
-            // 업로드된 이미지 정보 저장
             const files = req.files;
             files.forEach((file) => {
                 fileInfos.push(file.filename);
             });
-
-            // 클라이언트에게 응답
             res.status(201).json({ success: true, message: '이미지가 성공적으로 업로드 됨' });
 
-            // 데이터베이스 업데이트
             try {
                 const createProductImg = await Product.update(
-                    { product_image: fileInfos.toString() },
-                    { where: { user_code, product_code } }
+                    { image: fileInfos.toString() },
+                    { where: { id, user_id} }
                 );
             } catch (error) {
                 console.error(error);
-                return res.status(500).json({ success: false, message: '이미지 db 저장 중 서버 에러 발생' });
+                return res.status(500).json({ success: false, message: '이미지 db 저장 중 에러 발생' });
             }
         });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: '이미지 db 저장 중 에러 발생' });
     }
-};
+}
+
 
 exports.productGetMid = async (req, res) => {
     const farmName = [];
@@ -85,7 +70,7 @@ exports.productGetMid = async (req, res) => {
             return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
         });
 
-        const userCodeList = products.map(products=>{
+        const userCodeList = products.map(products => {
             return products.user_code;
         })
 
@@ -95,12 +80,12 @@ exports.productGetMid = async (req, res) => {
 
         const resolvedFarmNames = await Promise.all(farmNamePromises);
 
-        for(let i=0; i<resolvedFarmNames.length; i++){
+        for (let i = 0; i < resolvedFarmNames.length; i++) {
             farmName.push(resolvedFarmNames[i].dataValues.business_name)
         }
 
         if (products && products.length > 0) {
-            res.status(200).json({ success: true, products, firstProductImageURL, farmName});
+            res.status(200).json({ success: true, products, firstProductImageURL, farmName });
         } else {
             res.status(404).json({ success: false, message: '조회된 제품이 없습니다.' });
         }
@@ -191,9 +176,9 @@ exports.productSearchGetMid = async (req, res) => {
 
         const firstProductImageURL = firstProductImages.map(fileName => {
             return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
-        }); 
+        });
 
-        if(searchProduct.length > 0){
+        if (searchProduct.length > 0) {
             res.status(200).json({ success: true, searchProduct, firstProductImageURL });
         } else {
             res.status(404).json({ success: true, message: '검색 결과 없음' });
@@ -205,7 +190,7 @@ exports.productSearchGetMid = async (req, res) => {
 }
 
 exports.productCategorySearchGetMid = async (req, res) => {
-    const product_category = req.params.product_category==="vegetable" ? 0 : 1;
+    const product_category = req.params.product_category === "vegetable" ? 0 : 1;
     const keyword = req.params.keyword;
 
     try {
@@ -224,9 +209,9 @@ exports.productCategorySearchGetMid = async (req, res) => {
 
         const firstProductImageURL = firstProductImages.map(fileName => {
             return fileName ? `http://192.168.1.121:3000/product_images/${fileName}` : null;
-        }); 
+        });
 
-        if(searchProduct.length > 0){
+        if (searchProduct.length > 0) {
             res.status(200).json({ success: true, searchProduct, firstProductImageURL });
         } else {
             res.status(404).json({ success: true, message: '검색 결과 없음' });

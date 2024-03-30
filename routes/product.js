@@ -2,7 +2,7 @@ const router = require('express').Router();
 const productsMiddleware = require('../controller/product');
 
 router.post('/info', productsMiddleware.infoPostMid);
-router.post('/image', productsMiddleware.imagePostMid)
+router.post('/image/:user_id/:product_id', productsMiddleware.imagePostMid)
 router.get('', productsMiddleware.productGetMid);
 router.get('/:user_id', productsMiddleware.userGetMid);
 router.get('/search/:keyword', productsMiddleware.productSearchGetMid);

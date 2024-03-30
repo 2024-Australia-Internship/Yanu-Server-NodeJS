@@ -22,7 +22,7 @@ class Product extends Sequelize.Model {
       category: {
         type: DataTypes.STRING(20),
       },
-      hasgtag: {
+      hashtag: {
         type: DataTypes.STRING(200),
       },
       price: {

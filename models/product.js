@@ -31,7 +31,7 @@ class Product extends Sequelize.Model {
       unit: {
         type: DataTypes.STRING(10),
       },
-      product_description: {
+      description: {
         type: DataTypes.TEXT,
       },
       image: {

@@ -5,9 +5,7 @@ const path = require('path');
 const { Sequelize } = require('sequelize');
 
 
-exports.createInfoPostMid = async (req, res) => {
-    const {user_id, title, category, hashtag, price, unit, description } = req.body;
-
+exports.infoPostMid = async (req, res) => {
     try {
         const createProduct = await Product.create({
             ...req.body
@@ -20,7 +18,7 @@ exports.createInfoPostMid = async (req, res) => {
 
 }
 
-exports.createImagePostMid = async (req, res) => {
+exports.imagePostMid = async (req, res) => {
     const user_code = req.params.user_code;
     const product_code = req.params.product_code;
     const fileInfos = [];
@@ -73,7 +71,7 @@ exports.createImagePostMid = async (req, res) => {
     }
 };
 
-exports.listGetMid = async (req, res) => {
+exports.productGetMid = async (req, res) => {
     const farmName = [];
     try {
         const products = await Product.findAll({});
@@ -147,7 +145,7 @@ exports.productcodeGetMid = async (req, res) => {
     }
 }
 
-exports.usercodeGetMid = async (req, res) => {
+exports.userGetMid = async (req, res) => {
     const user_code = req.params.user_code;
 
     try {

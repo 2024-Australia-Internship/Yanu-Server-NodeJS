@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const usersMiddleware = require('./user-controller');
+const usersMiddleware = require('../controller/user');
 const saltMiddleware = require('../middlewares/salt');
 
 router.post('/register', usersMiddleware.registerPostMid);

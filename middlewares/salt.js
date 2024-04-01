@@ -1,15 +1,15 @@
 const { User } = require('../models'); 
 
 const saltRequired = async (req, res, next) => {
-    const { user_email } = req.body;
+    const { email } = req.body;
     try{
         const user = await User.findOne({
-            attributes: ['user_salt'],
-            where: {user_email}
+            attributes: ['password_salt'],
+            where: {email}
         });
 
         if(user) {
-            const salt = user.dataValues.user_salt.toString();
+            const salt = user.dataValues.password_salt.toString();
             req.salt = salt;
             next();
         } else {

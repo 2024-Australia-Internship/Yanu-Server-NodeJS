@@ -19,13 +19,10 @@ class Product extends Sequelize.Model {
       title: {
         type: DataTypes.STRING(50),
       },
-      product_title: {
-        type: DataTypes.STRING(50),
-      },
       category: {
         type: DataTypes.STRING(20),
       },
-      hasgtag: {
+      hashtag: {
         type: DataTypes.STRING(200),
       },
       price: {
@@ -34,7 +31,7 @@ class Product extends Sequelize.Model {
       unit: {
         type: DataTypes.STRING(10),
       },
-      product_description: {
+      description: {
         type: DataTypes.TEXT,
       },
       image: {
